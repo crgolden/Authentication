@@ -1,0 +1,198 @@
+﻿@page
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model CreateModel
+
+@{
+    ViewData["Title"] = "Create Identity Resource";
+}
+
+<div class="row">
+    <div class="col">
+        <hr/>
+        <h2>
+            <i class="fal fa-book-user"></i> @ViewData["Title"]
+        </h2>
+        <hr/>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <form method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <input asp-for="IdentityResource.Enabled" class="k-checkbox"/>
+                    <label asp-for="IdentityResource.Enabled" class="k-checkbox-label"></label>
+                </div>
+                <div class="col-12 col-md-6">
+                    <input asp-for="IdentityResource.Required" class="k-checkbox"/>
+                    <label asp-for="IdentityResource.Required" class="k-checkbox-label"></label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <input asp-for="IdentityResource.Emphasize" class="k-checkbox"/>
+                    <label asp-for="IdentityResource.Emphasize" class="k-checkbox-label"></label>
+                </div>
+                <div class="col-12 col-md-6">
+                    <input asp-for="IdentityResource.ShowInDiscoveryDocument" class="k-checkbox"/>
+                    <label asp-for="IdentityResource.ShowInDiscoveryDocument" class="k-checkbox-label">
+                        Show in discovery document
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <input asp-for="IdentityResource.NonEditable" class="k-checkbox"/>
+                    <label asp-for="IdentityResource.NonEditable" class="k-checkbox-label">
+                        Non-editable
+                    </label>
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="IdentityResource.Name"></label>
+                        <input asp-for="IdentityResource.Name" class="form-control" required/>
+                        <span asp-validation-for="IdentityResource.Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="IdentityResource.DisplayName">
+                            Display Name
+                        </label>
+                        <input asp-for="IdentityResource.DisplayName" class="form-control"/>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="IdentityResource.Description"></label>
+                        <textarea asp-for="IdentityResource.Description" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <hr/>
+                    @(Html.Kendo().Grid(new List<IdentityClaim>())
+                          .Name("claimTypesGrid")
+                          .ToolBar(toolbar => toolbar.ClientTemplateId("claimTypesToolbarTemplate"))
+                          .Editable(editable => editable
+                              .Mode(GridEditMode.InCell)
+                              .DisplayDeleteConfirmation(false))
+                          .Columns(columns =>
+                          {
+                              columns.Bound(identityResourceClaimType => identityResourceClaimType.Type);
+                              columns.Command(command => command.Destroy()).Width(200);
+                          })
+                          .Pageable(pageable => pageable.ButtonCount(5))
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .Events(events => events.Change("claimTypesChange"))
+                              .PageSize(5)
+                              .Batch(true)
+                              .ServerOperation(false)))
+                </div>
+                <div class="col-12 col-md-6">
+                    <hr/>
+                    @(Html.Kendo().Grid(new List<IdentityResourceProperty>())
+                          .Name("propertiesGrid")
+                          .ToolBar(toolbar => toolbar.ClientTemplateId("propertiesToolbarTemplate"))
+                          .Editable(editable => editable
+                              .Mode(GridEditMode.InCell)
+                              .DisplayDeleteConfirmation(false))
+                          .Columns(columns =>
+                          {
+                              columns.Bound(identityResourceProperty => identityResourceProperty.Key);
+                              columns.Bound(identityResourceProperty => identityResourceProperty.Value);
+                              columns.Command(command => command.Destroy()).Width(200);
+                          })
+                          .Pageable(pageable => pageable.ButtonCount(5))
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .Events(events => events.Change("propertiesChange"))
+                              .PageSize(5)
+                              .Batch(true)
+                              .ServerOperation(false)))
+                </div>
+            </div>
+            <hr/>
+            <div class="row">
+                <div class="col">
+                    <h4>
+                        <button type="submit" title="Create Identity Resource" class="btn btn-primary">
+                            Create
+                        </button> |
+                        <a asp-page="./Index" title="Identity Resources">
+                            <i class="fal fa-list"></i> List
+                        </a>
+                    </h4>
+                </div>
+            </div>
+            <hr/>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script id="claimTypesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-id-card"></i> Claim Types
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script id="propertiesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-cog"></i> Properties
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script type="text/javascript">
+        function claimTypesChange(event) {
+            $('input[name^="IdentityResource.UserClaims"]').remove();
+            $('form').append(event.sender.data().filter(claim => {
+                return claim.Type.length > 0;
+            }).reduce((inputs, claim, index) => {
+                    inputs.push($('<input>',
+                        {
+                            type: 'hidden',
+                            name: `IdentityResource.UserClaims[${index}].Type`,
+                            value: claim.Type
+                        }));
+                    return inputs;
+                },
+                []));
+        }
+
+        function propertiesChange(event) {
+            $('input[name^="IdentityResource.Properties"]').remove();
+            $('form').append(event.sender.data().filter(property => {
+                return property.Key.length > 0 && property.Value.length > 0;
+            }).reduce((inputs, property, index) => {
+                    inputs.push($('<input>',
+                        {
+                            type: 'hidden',
+                            name: `IdentityResource.Properties[${index}].Key`,
+                            value: property.Key
+                        }));
+                    inputs.push($('<input>',
+                        {
+                            type: 'hidden',
+                            name: `IdentityResource.Properties[${index}].Value`,
+                            value: property.Value
+                        }));
+                    return inputs;
+                },
+                []));
+        }
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

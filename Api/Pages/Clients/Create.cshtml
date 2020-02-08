@@ -1,0 +1,860 @@
+﻿@page
+@using IdentityServer4.EntityFramework.Entities
+@using IdentityServer4.Models
+@using Kendo.Mvc.UI
+@model CreateModel
+
+@{
+    ViewData["Title"] = "Create Client";
+}
+
+<div class="row">
+    <div class="col">
+        <hr />
+        <h2>
+            <i class="fal fa-mobile"></i> @ViewData["Title"]
+        </h2>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <form method="post" id="client">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <input asp-for="Client.Enabled" class="k-checkbox" />
+                    <label asp-for="Client.Enabled" class="k-checkbox-label"></label>
+                </div>
+                <div class="col-12 col-md-6">
+                    <input asp-for="Client.RequireClientSecret" class="k-checkbox" />
+                    <label asp-for="Client.RequireClientSecret" class="k-checkbox-label">
+                        Require Client Secret
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <input asp-for="Client.RequireConsent" class="k-checkbox" />
+                    <label asp-for="Client.RequireConsent" class="k-checkbox-label">
+                        Require Consent
+                    </label>
+                </div>
+                <div class="col-12 col-md-6">
+                    <input asp-for="Client.AllowRememberConsent" class="k-checkbox" />
+                    <label asp-for="Client.AllowRememberConsent" class="k-checkbox-label">
+                        Allow Remember Consent
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <input asp-for="Client.AlwaysIncludeUserClaimsInIdToken" class="k-checkbox" />
+                    <label asp-for="Client.AlwaysIncludeUserClaimsInIdToken" class="k-checkbox-label">
+                        Always Include User Claims in Id Token
+                    </label>
+                </div>
+                <div class="col-12 col-md-6">
+                    <input asp-for="Client.RequirePkce" class="k-checkbox" />
+                    <label asp-for="Client.RequirePkce" class="k-checkbox-label">
+                        Require Proof Key for Code Exchange
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <input asp-for="Client.AllowPlainTextPkce" class="k-checkbox" />
+                    <label asp-for="Client.AllowPlainTextPkce" class="k-checkbox-label">
+                        Allow Plaint-text Proof Key for Code Exchange
+                    </label>
+                </div>
+                <div class="col-12 col-md-6">
+                    <input asp-for="Client.AllowAccessTokensViaBrowser" class="k-checkbox" />
+                    <label asp-for="Client.AllowAccessTokensViaBrowser" class="k-checkbox-label">
+                        Allow Access Tokens via Browser
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <input asp-for="Client.FrontChannelLogoutSessionRequired" class="k-checkbox" />
+                    <label asp-for="Client.FrontChannelLogoutSessionRequired" class="k-checkbox-label">
+                        Front Channel Logout Session Required
+                    </label>
+                </div>
+                <div class="col-12 col-md-6">
+                    <input asp-for="Client.BackChannelLogoutSessionRequired" class="k-checkbox" />
+                    <label asp-for="Client.BackChannelLogoutSessionRequired" class="k-checkbox-label">
+                        Back Channel Logout Session Required
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <input asp-for="Client.AllowOfflineAccess" class="k-checkbox" />
+                    <label asp-for="Client.AllowOfflineAccess" class="k-checkbox-label">
+                        Allow Offline Access
+                    </label>
+                </div>
+                <div class="col-12 col-md-6">
+                    <input asp-for="Client.UpdateAccessTokenClaimsOnRefresh" class="k-checkbox" />
+                    <label asp-for="Client.UpdateAccessTokenClaimsOnRefresh" class="k-checkbox-label">
+                        Update Access Token Claims on Refresh
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <input asp-for="Client.EnableLocalLogin" class="k-checkbox" />
+                    <label asp-for="Client.EnableLocalLogin" class="k-checkbox-label">
+                        Enable Local Login
+                    </label>
+                </div>
+                <div class="col-12 col-md-6">
+                    <input asp-for="Client.IncludeJwtId" class="k-checkbox" />
+                    <label asp-for="Client.IncludeJwtId" class="k-checkbox-label">
+                        Include Jwt Id
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <input asp-for="Client.AlwaysSendClientClaims" class="k-checkbox" />
+                    <label asp-for="Client.AlwaysSendClientClaims" class="k-checkbox-label">
+                        Always Send Client Claims
+                    </label>
+                </div>
+                <div class="col-12 col-md-6">
+                    <input asp-for="Client.NonEditable" class="k-checkbox" />
+                    <label asp-for="Client.NonEditable" class="k-checkbox-label">
+                        Non-editable
+                    </label>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Client.ClientId">Id</label>
+                        <input asp-for="Client.ClientId" class="form-control" required />
+                        <span asp-validation-for="Client.ClientId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.ClientName">Name</label>
+                        <input asp-for="Client.ClientName" class="form-control" required />
+                        <span asp-validation-for="Client.ClientName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.ClientUri">URI</label>
+                        <input asp-for="Client.ClientUri" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.LogoUri">Logo URI</label>
+                        <input asp-for="Client.LogoUri" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.FrontChannelLogoutUri">Front Channel Logout URI</label>
+                        <input asp-for="Client.FrontChannelLogoutUri" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.BackChannelLogoutUri">Back Channel Logout URI</label>
+                        <input asp-for="Client.BackChannelLogoutUri" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.RefreshTokenUsage">Refresh Token Usage</label>
+                        <select asp-for="Client.RefreshTokenUsage"
+                                asp-items="Html.GetEnumSelectList<TokenUsage>()" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.RefreshTokenExpiration">Refresh Token Expiration</label>
+                        <select asp-for="Client.RefreshTokenExpiration"
+                                asp-items="Html.GetEnumSelectList<TokenExpiration>()" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.AccessTokenType">Access Token Type</label>
+                        <select asp-for="Client.AccessTokenType"
+                                asp-items="Html.GetEnumSelectList<AccessTokenType>()" class="form-control"></select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.ClientClaimsPrefix">Client Claims Prefix</label>
+                        <input asp-for="Client.ClientClaimsPrefix" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.PairWiseSubjectSalt">Pair-wise Subject Salt</label>
+                        <input asp-for="Client.PairWiseSubjectSalt" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.UserCodeType">User Code Type</label>
+                        <input asp-for="Client.UserCodeType" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Client.ProtocolType">Protocol Type</label>
+                        <input asp-for="Client.ProtocolType" class="form-control" required />
+                        <span asp-validation-for="Client.ClientId" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.Description"></label>
+                        <textarea asp-for="Client.Description" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.IdentityTokenLifetime">Identity Token Lifetime</label>
+                        <input asp-for="Client.IdentityTokenLifetime" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.AccessTokenLifetime">Access Token Lifetime</label>
+                        <input asp-for="Client.AccessTokenLifetime" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.AuthorizationCodeLifetime">Authorization Code Lifetime</label>
+                        <input asp-for="Client.AuthorizationCodeLifetime" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.ConsentLifetime">Consent Lifetime</label>
+                        <input asp-for="Client.ConsentLifetime" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.AbsoluteRefreshTokenLifetime">Absolute Refresh Token Lifetime</label>
+                        <input asp-for="Client.AbsoluteRefreshTokenLifetime" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.SlidingRefreshTokenLifetime">Sliding Refresh Token Lifetime</label>
+                        <input asp-for="Client.SlidingRefreshTokenLifetime" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.UserSsoLifetime">User SSO Lifetime</label>
+                        <input asp-for="Client.UserSsoLifetime" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Client.DeviceCodeLifetime">Device Code Lifetime</label>
+                        <input asp-for="Client.DeviceCodeLifetime" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <hr/>
+                    @(Html.Kendo().Grid(new List<ClientClaim>())
+                          .Name("claimsGrid")
+                          .ToolBar(toolbar => toolbar.ClientTemplateId("claimsToolbarTemplate"))
+                          .Editable(editable => editable
+                              .Mode(GridEditMode.InCell)
+                              .DisplayDeleteConfirmation(false))
+                          .Columns(columns =>
+                          {
+                              columns.Bound(clientClaim => clientClaim.Type);
+                              columns.Bound(clientClaim => clientClaim.Value);
+                              columns.Command(command => command.Destroy()).Width(200);
+                          })
+                          .Pageable(pageable => pageable.ButtonCount(5))
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .Events(events => events.Change("claimsChange"))
+                              .PageSize(5)
+                              .Batch(true)
+                              .ServerOperation(false)))
+                </div>
+                <div class="col-12 col-md-6">
+                    <hr/>
+                    @(Html.Kendo().Grid(new List<ClientCorsOrigin>())
+                          .Name("corsOriginsGrid")
+                          .ToolBar(toolbar => toolbar.ClientTemplateId("corsOriginsToolbarTemplate"))
+                          .Editable(editable => editable
+                              .Mode(GridEditMode.InCell)
+                              .DisplayDeleteConfirmation(false))
+                          .Columns(columns =>
+                          {
+                              columns.Bound(clientCorsOrigin => clientCorsOrigin.Origin);
+                              columns.Command(command => command.Destroy()).Width(200);
+                          })
+                          .Pageable(pageable => pageable.ButtonCount(5))
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .Events(events => events.Change("corsOriginsChange"))
+                              .PageSize(5)
+                              .Batch(true)
+                              .ServerOperation(false)))
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <hr/>
+                    @(Html.Kendo().Grid(new List<ClientGrantType>())
+                          .Name("grantTypesGrid")
+                          .ToolBar(toolbar => toolbar.ClientTemplateId("grantTypesToolbarTemplate"))
+                          .Editable(editable => editable
+                              .Mode(GridEditMode.InCell)
+                              .DisplayDeleteConfirmation(false))
+                          .Columns(columns =>
+                          {
+                              columns.Bound(clientGrantType => clientGrantType.GrantType);
+                              columns.Command(command => command.Destroy()).Width(200);
+                          })
+                          .Pageable(pageable => pageable.ButtonCount(5))
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .Events(events => events.Change("grantTypesChange"))
+                              .PageSize(5)
+                              .Batch(true)
+                              .ServerOperation(false)))
+                </div>
+                <div class="col-12 col-md-6">
+                    <hr/>
+                    @(Html.Kendo().Grid(new List<ClientIdPRestriction>())
+                          .Name("idPRestrictionsGrid")
+                          .ToolBar(toolbar => toolbar.ClientTemplateId("idPRestrictionsToolbarTemplate"))
+                          .Editable(editable => editable
+                              .Mode(GridEditMode.InCell)
+                              .DisplayDeleteConfirmation(false))
+                          .Columns(columns =>
+                          {
+                              columns.Bound(clientIdPRestriction => clientIdPRestriction.Provider);
+                              columns.Command(command => command.Destroy()).Width(200);
+                          })
+                          .Pageable(pageable => pageable.ButtonCount(5))
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .Events(events => events.Change("idPRestrictionsChange"))
+                              .PageSize(5)
+                              .Batch(true)
+                              .ServerOperation(false)))
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <hr/>
+                    @(Html.Kendo().Grid(new List<ClientPostLogoutRedirectUri>())
+                          .Name("postLogoutRedirectUrisGrid")
+                          .ToolBar(toolbar => toolbar.ClientTemplateId("postLogoutRedirectUrisToolbarTemplate"))
+                          .Editable(editable => editable
+                              .Mode(GridEditMode.InCell)
+                              .DisplayDeleteConfirmation(false))
+                          .Columns(columns =>
+                          {
+                              columns.Bound(clientPostLogoutRedirectUri => clientPostLogoutRedirectUri.PostLogoutRedirectUri);
+                              columns.Command(command => command.Destroy()).Width(200);
+                          })
+                          .Pageable(pageable => pageable.ButtonCount(5))
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .Events(events => events.Change("postLogoutRedirectUrisChange"))
+                              .PageSize(5)
+                              .Batch(true)
+                              .ServerOperation(false)))
+                </div>
+                <div class="col-12 col-md-6">
+                    <hr/>
+                    @(Html.Kendo().Grid(new List<ClientProperty>())
+                          .Name("propertiesGrid")
+                          .ToolBar(toolbar => toolbar.ClientTemplateId("propertiesToolbarTemplate"))
+                          .Editable(editable => editable
+                              .Mode(GridEditMode.InCell)
+                              .DisplayDeleteConfirmation(false))
+                          .Columns(columns =>
+                          {
+                              columns.Bound(clientProperty => clientProperty.Key);
+                              columns.Bound(clientProperty => clientProperty.Value);
+                              columns.Command(command => command.Destroy()).Width(200);
+                          })
+                          .Pageable(pageable => pageable.ButtonCount(5))
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .Events(events => events.Change("propertiesChange"))
+                              .PageSize(5)
+                              .Batch(true)
+                              .ServerOperation(false)))
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <hr/>
+                    @(Html.Kendo().Grid(new List<ClientRedirectUri>())
+                          .Name("redirectUrisGrid")
+                          .ToolBar(toolbar => toolbar.ClientTemplateId("redirectUrisToolbarTemplate"))
+                          .Editable(editable => editable
+                              .Mode(GridEditMode.InCell)
+                              .DisplayDeleteConfirmation(false))
+                          .Columns(columns =>
+                          {
+                              columns.Bound(clientRedirectUri => clientRedirectUri.RedirectUri);
+                              columns.Command(command => command.Destroy()).Width(200);
+                          })
+                          .Pageable(pageable => pageable.ButtonCount(5))
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .Events(events => events.Change("redirectUrisChange"))
+                              .PageSize(5)
+                              .Batch(true)
+                              .ServerOperation(false)))
+                </div>
+                <div class="col-12 col-md-6">
+                    <hr/>
+                    @(Html.Kendo().Grid(new List<ClientScope>())
+                          .Name("scopesGrid")
+                          .ToolBar(toolbar => toolbar.ClientTemplateId("scopesToolbarTemplate"))
+                          .Editable(editable => editable
+                              .Mode(GridEditMode.InCell)
+                              .DisplayDeleteConfirmation(false))
+                          .Columns(columns =>
+                          {
+                              columns.Bound(clientScope => clientScope.Scope);
+                              columns.Command(command => command.Destroy()).Width(200);
+                          })
+                          .Pageable(pageable => pageable.ButtonCount(5))
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .Events(events => events.Change("scopesChange"))
+                              .PageSize(5)
+                              .Batch(true)
+                              .ServerOperation(false)))
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <hr/>
+                    @(Html.Kendo().Grid(new List<ClientSecret>())
+                          .Name("secretsGrid")
+                          .ToolBar(toolbar => toolbar.ClientTemplateId("secretsToolbarTemplate"))
+                          .Editable(editable => editable
+                              .Mode(GridEditMode.InCell)
+                              .DisplayDeleteConfirmation(false))
+                          .Columns(columns =>
+                          {
+                              columns.Bound(clientSecret => clientSecret.Type);
+                              columns.Bound(clientSecret => clientSecret.Value);
+                              columns.Command(command =>
+                              {
+                                  command.Custom("Edit").IconClass("k-icon k-i-edit").Click("secretEdit");
+                                  command.Destroy();
+                              }).Width(200);
+                          })
+                          .Pageable(pageable => pageable.ButtonCount(5))
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .Model(model =>
+                              {
+                                  model.Field(clientSecret => clientSecret.Type).Editable(false);
+                                  model.Field(clientSecret => clientSecret.Value).Editable(false);
+                              })
+                              .Events(events => events.Change("secretsChange"))
+                              .PageSize(5)
+                              .Batch(true)
+                              .ServerOperation(false)))
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col">
+                    <h4>
+                        <button type="submit" title="Create Client" class="btn btn-primary">
+                            Create
+                        </button> |
+                        <a asp-page="./Index" title="Clients">
+                            <i class="fal fa-list"></i> List
+                        </a>
+                    </h4>
+                </div>
+            </div>
+            <hr />
+        </form>
+    </div>
+</div>
+
+@(Html.Kendo().Window()
+      .Name("secretWindow")
+      .Title("Secret")
+      .Visible(false)
+      .Modal(true)
+      .Draggable(true)
+      .Events(events => events.Close("secretWindowClose"))
+      .Content(@<text>
+                   <form id="secretForm">
+                       <input id="ClientSecretUid" class="d-none"/>
+                       <div class="form-group">
+                           <label for="ClientSecretType">Type</label>
+                           <input class="form-control" id="ClientSecretType" name="ClientSecretType" type="text" required>
+                       </div>
+                       <div class="form-group">
+                           <label for="ClientSecretValue">Value</label>
+                           <input class="form-control" id="ClientSecretValue" name="ClientSecretValue" type="text" required>
+                       </div>
+                       <div class="form-group">
+                           <label for="ClientSecretExpiration">Expiration</label>
+                           <br/>
+                           @(Html.Kendo().DatePicker().Name("ClientSecretExpiration"))
+                       </div>
+                       <div class="form-group">
+                           <label for="ClientSecretDescription">Description</label>
+                           <textarea class="form-control" id="ClientSecretDescription" name="ClientSecretDescription"></textarea>
+                       </div>
+                       <hr/>
+                       <button type="submit" class="k-button k-button-icontext k-primary k-grid-update">
+                           <span class="k-icon k-i-check"></span>Save
+                       </button>
+                       <button type="reset" class="k-button k-button-icontext k-grid-cancel">
+                           <span class="k-icon k-i-cancel"></span>Cancel
+                       </button>
+                   </form>
+                </text>))
+
+@section Scripts {
+
+    <script id="claimsToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-id-card"></i> Claims
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script id="corsOriginsToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-map-pin"></i> CORS Origins
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script id="grantTypesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-atlas"></i> Grant Types
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script id="idPRestrictionsToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-user-slash"></i> Identity Provider Restrictions
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script id="postLogoutRedirectUrisToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-exchange-alt"></i> Post-logout Redirect URIs
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script id="propertiesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-cog"></i> Properties
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+    
+    <script id="redirectUrisToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-exchange"></i> Redirect URIs
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+    
+    <script id="scopesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-globe"></i> Scopes
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script id="secretsToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-user-secret"></i> Secrets
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script type="text/javascript">
+        function claimsChange(event) {
+            $('input[name^="Client.Claims"]').remove();
+            $('#client').append(event.sender.data().filter(claim => {
+                return claim.Type.length > 0 && claim.Value.length > 0;
+            }).reduce((inputs, claim, index) => {
+                inputs.push($('<input>',
+                    {
+                        type: 'hidden',
+                        name: `Client.Claims[${index}].Type`,
+                        value: claim.Type
+                    }));
+                inputs.push($('<input>',
+                    {
+                        type: 'hidden',
+                        name: `Client.Claims[${index}].Value`,
+                        value: claim.Value
+                    }));
+                return inputs;
+            },
+                []));
+        }
+
+        function corsOriginsChange(event) {
+            $('input[name^="Client.AllowedCorsOrigins"]').remove();
+            $('#client').append(event.sender.data().filter(corsOrigin => {
+                return corsOrigin.Origin.length > 0;
+            }).reduce((inputs, corsOrigin, index) => {
+                inputs.push($('<input>',
+                    {
+                        type: 'hidden',
+                        name: `Client.AllowedCorsOrigins[${index}].Origin`,
+                        value: corsOrigin.Origin
+                    }));
+                return inputs;
+            },
+                []));
+        }
+
+        function grantTypesChange(event) {
+            $('input[name^="Client.AllowedGrantTypes"]').remove();
+            $('#client').append(event.sender.data().filter(grantType => {
+                return grantType.GrantType.length > 0;
+            }).reduce((inputs, grantType, index) => {
+                inputs.push($('<input>',
+                    {
+                        type: 'hidden',
+                        name: `Client.AllowedGrantTypes[${index}].GrantType`,
+                        value: grantType.GrantType
+                    }));
+                return inputs;
+            },
+                []));
+        }
+
+        function idPRestrictionsChange(event) {
+            $('input[name^="Client.IdentityProviderRestrictions"]').remove();
+            $('#client').append(event.sender.data().filter(idPRestriction => {
+                return idPRestriction.Provider.length > 0;
+            }).reduce((inputs, idPRestriction, index) => {
+                inputs.push($('<input>',
+                    {
+                        type: 'hidden',
+                        name: `Client.IdentityProviderRestrictions[${index}].Provider`,
+                        value: idPRestriction.Provider
+                    }));
+                return inputs;
+            },
+                []));
+        }
+
+        function postLogoutRedirectUrisChange(event) {
+            $('input[name^="Client.PostLogoutRedirectUris"]').remove();
+            $('#client').append(event.sender.data().filter(postLogoutRedirectUri => {
+                return postLogoutRedirectUri.PostLogoutRedirectUri.length > 0;
+            }).reduce((inputs, postLogoutRedirectUri, index) => {
+                inputs.push($('<input>',
+                    {
+                        type: 'hidden',
+                        name: `Client.PostLogoutRedirectUris[${index}].PostLogoutRedirectUri`,
+                        value: postLogoutRedirectUri.PostLogoutRedirectUri
+                    }));
+                return inputs;
+            },
+                []));
+        }
+
+        function propertiesChange(event) {
+            $('input[name^="Client.Properties"]').remove();
+            $('#client').append(event.sender.data().filter(property => {
+                return property.Key.length > 0 && property.Value.length > 0;
+            }).reduce((inputs, property, index) => {
+                inputs.push($('<input>',
+                    {
+                        type: 'hidden',
+                        name: `Client.Properties[${index}].Key`,
+                        value: property.Key
+                    }));
+                inputs.push($('<input>',
+                    {
+                        type: 'hidden',
+                        name: `Client.Properties[${index}].Value`,
+                        value: property.Value
+                    }));
+                return inputs;
+            },
+                []));
+        }
+
+        function redirectUrisChange(event) {
+            $('input[name^="Client.RedirectUris"]').remove();
+            $('#client').append(event.sender.data().filter(redirectUri => {
+                return redirectUri.RedirectUri.length > 0;
+            }).reduce((inputs, redirectUri, index) => {
+                inputs.push($('<input>',
+                    {
+                        type: 'hidden',
+                        name: `Client.RedirectUris[${index}].RedirectUri`,
+                        value: redirectUri.RedirectUri
+                    }));
+                return inputs;
+            },
+                []));
+        }
+
+        const scopesChange = function (event) {
+            $('input[name^="Client.AllowedScopes"]').remove();
+            $('#client').append(event.sender.data().filter(property => {
+                return property.Scope.length > 0;
+            }).reduce((inputs, property, index) => {
+                    inputs.push($('<input>',
+                        {
+                            type: 'hidden',
+                            name: `Client.AllowedScopes[${index}].Scope`,
+                            value: property.Scope
+                        }));
+                    return inputs;
+                },
+                []));
+        };
+
+        let secretAction;
+        let secretWindow;
+        let secretForm;
+        let secretFormUid;
+        let secretFormValidator;
+        let secretsGrid;
+
+        function secretsChange(event) {
+            switch (event.action) {
+                case 'add':
+                    {
+                        const dataItem = event.sender.at(event.index);
+                        secretFormUid.val(dataItem.uid);
+                        secretWindow.open().center();
+                        secretAction = 'create';
+                    }
+                case 'remove':
+                    {
+                        secretInputsRefresh();
+                    }
+            }
+        }
+
+        const secretEdit = function (event) {
+            event.preventDefault();
+            secretFormReset();
+            secretFormUpdate();
+            secretWindow.open().center();
+        };
+
+        const secretWindowClose = function (event) {
+            if (event.userTriggered) {
+                removeGridSecret();
+            }
+            secretFormReset();
+        };
+
+        const secretInputsRefresh = function () {
+            $('input[name^="Client.ClientSecrets"]').remove();
+            $('#client').append(secretsGrid.dataSource.data().reduce(
+                (inputs, secret, index) => {
+                    inputs.push($('<input>',
+                        {
+                            type: 'hidden',
+                            name: `Client.ClientSecrets[${index}].Description`,
+                            value: secret.Description
+                        }));
+                    inputs.push($('<input>',
+                        {
+                            type: 'hidden',
+                            name: `Client.ClientSecrets[${index}].Value`,
+                            value: secret.Value
+                        }));
+                    inputs.push($('<input>',
+                        {
+                            type: 'hidden',
+                            name: `Client.ClientSecrets[${index}].Expiration`,
+                            value: secret.Expiration
+                        }));
+                    inputs.push($('<input>',
+                        {
+                            type: 'hidden',
+                            name: `Client.ClientSecrets[${index}].Type`,
+                            value: secret.Type
+                        }));
+                    return inputs;
+                },
+                []));
+        };
+
+        const secretFormReset = function () {
+            secretFormValidator.resetForm();
+            secretForm.reset();
+            secretAction = undefined;
+        };
+
+        const secretFormSubmit = function () {
+            updateGridSecret();
+            secretInputsRefresh();
+            secretFormReset();
+            secretWindow.close();
+        };
+
+        const secretFormUpdate = function () {
+            const row = $(event.toElement).closest('tr');
+            const dataItem = secretsGrid.dataItem(row);
+            secretFormUid.val(dataItem.uid);
+            $('#ClientSecretDescription').val(dataItem.Description);
+            $('#ClientSecretValue').val(dataItem.Value);
+            $('#ClientSecretExpiration').val(dataItem.Expiration);
+            $('#ClientSecretType').val(dataItem.Type);
+        };
+
+        const secretFormClose = function () {
+            removeGridSecret();
+            secretFormReset();
+            secretWindow.close();
+        };
+
+        const removeGridSecret = function () {
+            if (secretAction !== 'create') {
+                return;
+            }
+            const uid = secretFormUid.val();
+            const dataItem = secretsGrid.dataSource.getByUid(uid);
+            secretsGrid.dataSource.remove(dataItem);
+        };
+
+        const updateGridSecret = function () {
+            const uid = secretFormUid.val();
+            const dataItem = secretsGrid.dataSource.getByUid(uid);
+            dataItem.Description = $('#ClientSecretDescription').val();
+            dataItem.Value = $('#ClientSecretValue').val();
+            dataItem.Expiration = $('#ClientSecretExpiration').val();
+            dataItem.Type = $('#ClientSecretType').val();
+            secretsGrid.refresh();
+        };
+
+        $(function () {
+            $.validator.setDefaults({
+                errorClass: 'text-danger'
+            });
+
+            secretsGrid = $('#secretsGrid').getKendoGrid();
+            secretWindow = $('#secretWindow').getKendoWindow();
+            secretForm = document.getElementById('secretForm');
+            secretFormUid = $('#ClientSecretUid');
+            secretFormValidator = $(secretForm).validate({
+                submitHandler: secretFormSubmit
+            });
+            $('#secretWindow button.k-grid-cancel').click(secretFormClose);
+        });
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,50 @@
+﻿@page
+@using Kendo.Mvc.UI
+@model IndexModel
+
+@{
+    ViewData["Title"] = "Roles";
+}
+
+<div class="row">
+    <div class="col">
+        <hr />
+        <div class="row">
+            <div class="col">
+                <h2>
+                    <i class="fal fa-id-badge"></i> @ViewData["Title"]
+                </h2>
+            </div>
+            <div class="col">
+                <h2 class="float-md-right">
+                    <a asp-page="./Create" title="Create Role">
+                        <i class="fal fa-plus"></i> Create Role
+                    </a>
+                </h2>
+            </div>
+        </div>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        @(Html.Kendo().Grid(Model.Roles)
+              .Name("rolesGrid")
+              .Columns(columns => columns.Bound(role => role.Name))
+              .Sortable(sort => sort.AllowUnsort(false))
+              .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+              .Pageable(pageable => pageable.ButtonCount(5))
+              .DataSource(dataSource => dataSource
+                  .Ajax()
+                  .Sort(sort => sort.Add(nameof(Core.Entities.Role.Name)).Ascending())
+                  .PageSize(5)
+                  .ServerOperation(false))
+              .ClientRowTemplate(
+                  "<tr data-uid='#: uid #'>" +
+                  "<td>" +
+                  "<a href='/roles/details/#:data.Id#'>#:data.Name#</a>" +
+                  "</td>" +
+                  "</tr>"))
+        <hr/>
+    </div>
+</div>

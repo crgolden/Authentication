@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>Authentication</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <UserSecretsId>fe4fb737-307e-45f1-b055-1b85beecdcf6</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="3.1.1" />
+    <PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.619" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\AspNetCore\Core.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\Core\Azure.ServiceBus\Core.Azure.ServiceBus.csproj" />
+    <ProjectReference Include="..\..\Core\IdentityServer\Core.IdentityServer.csproj" />
+    <ProjectReference Include="..\..\Services\Data.EntityFramework\Services.Data.EntityFramework.csproj" />
+    <ProjectReference Include="..\..\Services\Email.SendGrid\Services.Email.SendGrid.csproj" />
+  </ItemGroup>
+
+</Project>

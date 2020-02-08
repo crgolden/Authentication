@@ -1,0 +1,48 @@
+﻿@page "{id:int}"
+@model DeleteModel
+
+@{
+    ViewData["Title"] = $"Delete \"{Model.Client.ClientName}\"";
+}
+
+<div class="row">
+    <div class="col">
+        <hr />
+        <h2>
+            <i class="fal fa-mobile"></i> @ViewData["Title"]
+        </h2>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.Client.ClientName)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Client.ClientName)
+            </dd>
+        </dl>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <form method="post">
+            <input type="hidden" asp-for="Client.Id" />
+            <h4>
+                <button type="submit" class="btn btn-danger" title="Delete Client">
+                    Delete
+                </button> |
+                <a asp-page="./Details/Index" asp-route-id="@Model.Client.Id" title="Client Details">
+                    <i class="fal fa-info-square"></i> Details
+                </a> |
+                <a asp-page="./Index" title="Clients">
+                    <i class="fal fa-list"></i> List
+                </a>
+            </h4>
+        </form>
+        <hr />
+    </div>
+</div>

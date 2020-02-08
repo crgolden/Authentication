@@ -1,0 +1,87 @@
+﻿@{
+    var id = int.Parse($"{ViewContext.RouteData.Values["id"]}");
+    var activePage = System.IO.Path.GetFileNameWithoutExtension(ViewContext.ActionDescriptor.DisplayName);
+}
+
+<ul class="nav nav-pills flex-column">
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "Index", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="Client Details"
+           asp-page="./Index"
+           asp-route-id="@id">
+            Details
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "Claims", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="Client Claims"
+           asp-page="./Claims"
+           asp-route-id="@id">
+            Claims
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "CorsOrigins", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="Client CORS Origins"
+           asp-page="./CorsOrigins"
+           asp-route-id="@id">
+            CORS Origins
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "GrantTypes", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="Client Grant Types"
+           asp-page="./GrantTypes"
+           asp-route-id="@id">
+            Grant Types
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "IdPRestrictions", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="Client Identity Provider Restrictions"
+           asp-page="./IdPRestrictions"
+           asp-route-id="@id">
+            Identity Provider Restrictions
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "PostLogoutRedirectUris", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="Client Post-logout Redirect URIs"
+           asp-page="./PostLogoutRedirectUris"
+           asp-route-id="@id">
+            Post-logout Redirect URIs
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "Properties", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="Client Properties"
+           asp-page="./Properties"
+           asp-route-id="@id">
+            Properties
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "RedirectUris", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="Client Redirect URIs"
+           asp-page="./RedirectUris"
+           asp-route-id="@id">
+            Redirect URIs
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "Scopes", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="Client Scopes"
+           asp-page="./Scopes"
+           asp-route-id="@id">
+            Scopes
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "Secrets", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="Client Secrets"
+           asp-page="./Secrets"
+           asp-route-id="@id">
+            Secrets
+        </a>
+    </li>
+</ul>

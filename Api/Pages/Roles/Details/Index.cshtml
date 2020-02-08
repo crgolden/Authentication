@@ -1,0 +1,28 @@
+﻿@page "{id:guid}"
+@model IndexModel
+
+@{
+    ViewData["Title"] = $"\"{Model.Role.Name}\" Details";
+}
+
+<dl>
+    <dt>
+        @Html.DisplayNameFor(model => model.Role.Name)
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.Role.Name)
+    </dd>
+</dl>
+<hr />
+<h4>
+    <a asp-page="../Index" title="Roles">
+        <i class="fal fa-list"></i> List |
+    </a>
+    <a asp-page="../Edit/Index" asp-route-id="@Model.Role.Id" title="Edit Role Details">
+        <i class="fal fa-edit"></i> Edit
+    </a> |
+    <a asp-page="../Delete" asp-route-id="@Model.Role.Id" title="Delete Role">
+        <i class="fal fa-trash"></i> Delete
+    </a>
+</h4>
+<hr />

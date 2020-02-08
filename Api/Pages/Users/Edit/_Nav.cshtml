@@ -1,0 +1,31 @@
+﻿@{
+    var id = Guid.Parse($"{ViewContext.RouteData.Values["id"]}");
+    var activePage = System.IO.Path.GetFileNameWithoutExtension(ViewContext.ActionDescriptor.DisplayName);
+}
+
+<ul class="nav nav-pills flex-column">
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "Index", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="Edit User Details"
+           asp-page="./Index"
+           asp-route-id="@id">
+            Edit Details
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "Roles", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="Edit User Roles"
+           asp-page="./Roles"
+           asp-route-id="@id">
+            Edit Roles
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "Claims", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="Edit User Claims"
+           asp-page="./Claims"
+           asp-route-id="@id">
+            Edit Claims
+        </a>
+    </li>
+</ul>

@@ -1,0 +1,90 @@
+﻿@page "{id:int}"
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model PostLogoutRedirectUrisModel
+
+@{
+    ViewData["Title"] = $"Edit \"{Model.Client.ClientName}\" Post-logout Redirect URIs";
+}
+
+<form method="post">
+    <input type="hidden" asp-for="Client.Id" />
+    @{
+        var clientPostLogoutRedirectUris = Model.PostLogoutRedirectUris.ToArray();
+        for (var i = 0; i < clientPostLogoutRedirectUris.Length; i++)
+        {
+            <input type="hidden" name="Client.PostLogoutRedirectUris[@i].Id" value="@clientPostLogoutRedirectUris[i].Id" />
+            <input type="hidden" name="Client.PostLogoutRedirectUris[@i].PostLogoutRedirectUri" value="@clientPostLogoutRedirectUris[i].PostLogoutRedirectUri" />
+        }
+    }
+    @(Html.Kendo().Grid(Model.PostLogoutRedirectUris)
+          .Name("postLogoutRedirectUrisGrid")
+          .ToolBar(toolbar => toolbar.ClientTemplateId("postLogoutRedirectUrisToolbarTemplate"))
+          .Editable(editable => editable
+              .Mode(GridEditMode.InCell)
+              .DisplayDeleteConfirmation(false))
+          .Columns(columns =>
+          {
+              columns.Bound(clientPostLogoutRedirectUri => clientPostLogoutRedirectUri.PostLogoutRedirectUri);
+              columns.Command(command => command.Destroy()).Width(200);
+          })
+          .Sortable(sort => sort.AllowUnsort(false))
+          .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+          .Pageable(pageable => pageable.ButtonCount(5))
+          .DataSource(dataSource => dataSource
+              .Ajax()
+              .Model(model => model.Id(clientPostLogoutRedirectUri => clientPostLogoutRedirectUri.Id))
+              .Events(events => events.Change("postLogoutRedirectUrisChange"))
+              .Sort(sort => sort.Add(nameof(ClientPostLogoutRedirectUri.PostLogoutRedirectUri)).Ascending())
+              .PageSize(5)
+              .Batch(true)
+              .ServerOperation(false)))
+    <hr />
+    <div class="form-group">
+        <h4>
+            <button type="submit" class="btn btn-primary" title="Save Client Post-logout Redirect URIs">
+                Save
+            </button> |
+            <a asp-page="../Details/PostLogoutRedirectUris" asp-route-id="@Model.Client.Id" title="Client Post-logout Redirect URIs">
+                <i class="fal fa-info-square"></i> Details
+            </a> |
+            <a asp-page="../Index" title="Clients">
+                <i class="fal fa-list"></i> List
+            </a>
+        </h4>
+        <hr />
+    </div>
+</form>
+
+@section Scripts {
+    <script id="postLogoutRedirectUrisToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-exchange-alt"></i> Post-logout Redirect URIs
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script type="text/javascript">
+        function postLogoutRedirectUrisChange(event) {
+            $('input[name^="Client.PostLogoutRedirectUris"]').remove();
+            $('form').append(event.sender.data().filter(postLogoutRedirectUri => {
+                return postLogoutRedirectUri.PostLogoutRedirectUri.length > 0;
+            }).reduce((inputs, postLogoutRedirectUri, index) => {
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Client.PostLogoutRedirectUris[${index}].Id`,
+                    value: postLogoutRedirectUri.Id
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Client.PostLogoutRedirectUris[${index}].PostLogoutRedirectUri`,
+                    value: postLogoutRedirectUri.PostLogoutRedirectUri
+                }));
+                return inputs;
+            }, []));
+        }
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

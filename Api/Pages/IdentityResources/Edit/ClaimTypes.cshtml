@@ -1,0 +1,90 @@
+﻿@page "{id:int}"
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model ClaimTypesModel
+
+@{
+    ViewData["Title"] = $"Edit \"{Model.IdentityResource.Name}\" Claim Types";
+}
+
+<form method="post">
+    <input type="hidden" asp-for="IdentityResource.Id" />
+    @{
+        var identityResourceClaimTypes = Model.ClaimTypes.ToArray();
+        for (var i = 0; i < identityResourceClaimTypes.Length; i++)
+        {
+            <input type="hidden" name="IdentityResource.UserClaims[@i].Id" value="@identityResourceClaimTypes[i].Id" />
+            <input type="hidden" name="IdentityResource.UserClaims[@i].Type" value="@identityResourceClaimTypes[i].Type" />
+        }
+    }
+    @(Html.Kendo().Grid(Model.ClaimTypes)
+          .Name("claimTypesGrid")
+          .ToolBar(toolbar => toolbar.ClientTemplateId("claimTypesToolbarTemplate"))
+          .Editable(editable => editable
+              .Mode(GridEditMode.InCell)
+              .DisplayDeleteConfirmation(false))
+          .Columns(columns =>
+          {
+              columns.Bound(identityResourceClaimType => identityResourceClaimType.Type);
+              columns.Command(command => command.Destroy()).Width(200);
+          })
+          .Sortable(sort => sort.AllowUnsort(false))
+          .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+          .Pageable(pageable => pageable.ButtonCount(5))
+          .DataSource(dataSource => dataSource
+              .Ajax()
+              .Model(model => model.Id(identityResourceClaimType => identityResourceClaimType.Id))
+              .Events(events => events.Change("claimTypesChange"))
+              .Sort(sort => sort.Add(nameof(IdentityClaim.Type)).Ascending())
+              .PageSize(5)
+              .Batch(true)
+              .ServerOperation(false)))
+    <hr />
+    <div class="form-group">
+        <h4>
+            <button type="submit" class="btn btn-primary" title="Save Identity Resource Claim Types">
+                Save
+            </button> |
+            <a asp-page="../Details/ClaimTypes" asp-route-id="@Model.IdentityResource.Id" title="Identity Resource Claim Types">
+                <i class="fal fa-info-square"></i> Details
+            </a> |
+            <a asp-page="../Index" title="Identity Resources">
+                <i class="fal fa-list"></i> List
+            </a>
+        </h4>
+        <hr />
+    </div>
+</form>
+
+@section Scripts {
+    <script id="claimTypesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-id-card"></i> Claim Types
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script type="text/javascript">
+        function claimTypesChange(event) {
+            $('input[name^="IdentityResource.UserClaims"]').remove();
+            $('form').append(event.sender.data().filter(claim => {
+                return claim.Type.length > 0;
+            }).reduce((inputs, claim, index) => {
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `IdentityResource.UserClaims[${index}].Id`,
+                    value: claim.Id
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `IdentityResource.UserClaims[${index}].Type`,
+                    value: claim.Type
+                }));
+                return inputs;
+            }, []));
+        }
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

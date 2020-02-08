@@ -1,0 +1,48 @@
+﻿@page "{id:int}"
+@model DeleteModel
+
+@{
+    ViewData["Title"] = $"Delete \"{Model.IdentityResource.Name}\"";
+}
+
+<div class="row">
+    <div class="col">
+        <hr />
+        <h2>
+            <i class="fal fa-book-user"></i> @ViewData["Title"]
+        </h2>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.IdentityResource.Name)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.IdentityResource.Name)
+            </dd>
+        </dl>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <form method="post">
+            <input type="hidden" asp-for="IdentityResource.Id" />
+            <h4>
+                <button type="submit" class="btn btn-danger" title="Delete Identity Resource">
+                    Delete
+                </button> |
+                <a asp-page="./Details/Index" asp-route-id="@Model.IdentityResource.Id" title="Identity Resource Details">
+                    <i class="fal fa-info-square"></i> Details
+                </a> |
+                <a asp-page="./Index" title="Identity Resources">
+                    <i class="fal fa-list"></i> List
+                </a>
+            </h4>
+        </form>
+        <hr />
+    </div>
+</div>

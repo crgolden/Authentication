@@ -1,0 +1,49 @@
+﻿@page "{id:guid}"
+@using Kendo.Mvc.UI
+@model RolesModel
+
+@{
+    ViewData["Title"] = $"\"{Model.UserModel.Email}\" Roles";
+}
+
+@(Html.Kendo().Grid(Model.Roles)
+      .Name("rolesGrid")
+      .ToolBar(toolbar => toolbar.ClientTemplateId("rolesToolbarTemplate"))
+      .Columns(columns => columns.Bound(userRole => userRole.Name))
+      .Sortable(sort => sort.AllowUnsort(false))
+      .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+      .Pageable(pageable => pageable.ButtonCount(5))
+      .DataSource(dataSource => dataSource
+          .Ajax()
+          .Sort(sort => sort.Add(nameof(Core.Entities.Role.Name)).Ascending())
+          .PageSize(5)
+          .ServerOperation(false))
+      .ClientRowTemplate(
+          @"<tr data-uid='#:uid#' role='row'>" +
+          "<td role='gridcell'>" +
+          "<a href='/roles/details/#:data.Id#'>#:data.Name#</a>" +
+          "</td>" +
+          "</tr>"))
+<hr />
+<h4>
+    <a asp-page="../Index" title="Users">
+        <i class="fal fa-list"></i> List |
+    </a>
+    <a asp-page="../Edit/Roles" asp-route-id="@Model.UserModel.Id" title="Edit User Roles">
+        <i class="fal fa-edit"></i> Edit
+    </a> |
+    <a asp-page="../Delete" asp-route-id="@Model.UserModel.Id" title="Delete User">
+        <i class="fal fa-trash"></i> Delete
+    </a>
+</h4>
+<hr />
+
+@section Scripts {
+    <script id="rolesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-id-badge"></i> Roles
+        </h4>
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

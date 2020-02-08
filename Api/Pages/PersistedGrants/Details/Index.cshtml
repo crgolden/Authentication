@@ -1,0 +1,78 @@
+﻿@page "{key}"
+@model IndexModel
+
+@{
+    ViewData["Title"] = "Persisted Grant Details";
+}
+
+<div class="row">
+    <div class="col-12 col-md-6">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.PersistedGrant.Key)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.PersistedGrant.Key)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.PersistedGrant.Type)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.PersistedGrant.Type)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.PersistedGrant.CreationTime)
+            </dt>
+            <dd>
+                @Html.LabelFor(model => model.PersistedGrant.CreationTime, "Created")
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.PersistedGrant.Expiration)
+            </dt>
+            <dd>
+                @Html.LabelFor(model => model.PersistedGrant.Expiration, "Expires")
+            </dd>
+        </dl>
+    </div>
+    <div class="col-12 col-md-6">
+        <dl>
+            @{
+                if (!string.IsNullOrEmpty(Model.PersistedGrant.SubjectId))
+                {
+                    <dt>
+                        @Html.LabelFor(model => model.PersistedGrant.SubjectId, "Subject Id")
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.PersistedGrant.SubjectId)
+                    </dd>
+                }
+            }
+            <dt>
+                @Html.LabelFor(model => model.PersistedGrant.ClientId, "Client Id")
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.PersistedGrant.ClientId)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.PersistedGrant.Data)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.PersistedGrant.Data)
+            </dd>
+        </dl>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col">
+        <h4>
+            <a asp-page="../Index" title="Persisted Grants">
+                <i class="fal fa-list"></i> List |
+            </a>
+            <a asp-page="../Delete" asp-route-key="@Model.PersistedGrant.Key" title="Delete Persisted Grant">
+                <i class="fal fa-trash"></i> Delete
+            </a>
+        </h4>
+    </div>
+</div>
+<hr />

@@ -1,0 +1,47 @@
+﻿@{
+    var id = int.Parse($"{ViewContext.RouteData.Values["id"]}");
+    var activePage = System.IO.Path.GetFileNameWithoutExtension(ViewContext.ActionDescriptor.DisplayName);
+}
+
+<ul class="nav nav-pills flex-column">
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "Index", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="API Resource Details"
+           asp-page="./Index"
+           asp-route-id="@id">
+            Details
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "ClaimTypes", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="API Resource Claim Types"
+           asp-page="./ClaimTypes"
+           asp-route-id="@id">
+            Claim Types
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "Properties", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="API Resource Properties"
+           asp-page="./Properties"
+           asp-route-id="@id">
+            Properties
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "Scopes", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="API Resource Scopes"
+           asp-page="./Scopes"
+           asp-route-id="@id">
+            Scopes
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "Secrets", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="API Resource Secrets"
+           asp-page="./Secrets"
+           asp-route-id="@id">
+            Secrets
+        </a>
+    </li>
+</ul>

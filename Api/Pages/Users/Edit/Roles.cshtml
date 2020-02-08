@@ -1,0 +1,96 @@
+﻿@page "{id:guid}"
+@using Kendo.Mvc.UI
+@model RolesModel
+
+@{
+    ViewData["Title"] = $"Edit \"{Model.UserModel.Email}\" Roles";
+}
+
+<form method="post">
+    <input type="hidden" asp-for="UserModel.Id" />
+    @{
+        var userRoles = Model.UserModel.UserRoles.ToArray();
+        for (var i = 0; i < userRoles.Length; i++)
+        {
+            <input type="hidden" name="UserModel.UserRoles[@i].RoleId" value="@userRoles[i].RoleId" />
+        }
+    }
+    @(Html.Kendo().Grid(Model.Roles)
+          .Name("rolesGrid")
+          .ToolBar(toolbar => toolbar.ClientTemplateId("rolesToolbarTemplate"))
+          .Columns(columns =>
+          {
+              columns.Select().Width(50);
+              columns.Bound(userRole => userRole.Name);
+          })
+          .Sortable(sort => sort.AllowUnsort(false))
+          .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+          .Pageable(pageable => pageable.ButtonCount(5))
+          .PersistSelection()
+          .Events(events => events
+              .Change("rolesChange")
+              .DataBound("rolesDataBound"))
+          .DataSource(dataSource => dataSource
+              .Ajax()
+              .Model(model => model.Id(userRole => userRole.Id))
+              .Sort(sort => sort.Add(nameof(Core.Entities.Role.Name)).Ascending())
+              .PageSize(5)
+              .ServerOperation(false))
+          .ClientRowTemplate(
+              @"<tr data-uid='#:uid#' role='row'>" +
+              "<td role='gridcell'>" +
+              "<input class='k-checkbox' data-role='checkbox' type='checkbox' id='cb_#:data.uid#'>" +
+              "<label class='k-checkbox-label k-no-text' for='cb_#:data.uid#'>​</label>" +
+              "</td>" +
+              "<td role='gridcell'>" +
+              "<a href='/roles/details/#:data.Id#'>#:data.Name#</a>" +
+              "</td>" +
+              "</tr>"))
+    <hr />
+    <div class="form-group">
+        <h4>
+            <button type="submit" class="btn btn-primary" title="Save User Roles">
+                Save
+            </button> |
+            <a asp-page="../Details/Roles" asp-route-id="@Model.UserModel.Id" title="User Roles">
+                <i class="fal fa-info-square"></i> Details
+            </a> |
+            <a asp-page="../Index" title="Users">
+                <i class="fal fa-list"></i> List
+            </a>
+        </h4>
+        <hr />
+    </div>
+</form>
+
+@section Scripts {
+    <script id="rolesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-id-badge"></i> Roles
+        </h4>
+    </script>
+
+    <script type="text/javascript">
+        function rolesChange(event) {
+            $('input[name^="UserModel.UserRoles"]').remove();
+            $('form').append(event.sender.selectedKeyNames().map((roleId, index) => $('<input>',
+                {
+                    type: 'hidden',
+                    name: `UserModel.UserRoles[${index}].RoleId`,
+                    value: roleId
+                })));
+        }
+
+        function rolesDataBound(event) {
+            const userRoles = $('input[name^="UserModel.UserRoles"]')
+                .toArray()
+                .map(userRole => userRole.value);
+            event.sender.items()
+                .toArray()
+                .filter(item => userRoles.some(userRole => userRole === event.sender.dataItem(item).Id))
+                .forEach(item => event.sender.select(item));
+        }
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

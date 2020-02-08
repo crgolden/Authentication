@@ -1,0 +1,47 @@
+﻿@page "{id:int}"
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model IdPRestrictionsModel
+
+@{
+    ViewData["Title"] = $"\"{Model.Client.ClientName}\" Identity Provider Restrictions";
+}
+
+@(Html.Kendo().Grid(Model.IdPRestrictions)
+      .Name("idPRestrictionsGrid")
+      .ToolBar(toolbar => toolbar.ClientTemplateId("idPRestrictionsToolbarTemplate"))
+      .Columns(columns =>
+      {
+          columns.Bound(clientIdPRestriction => clientIdPRestriction.Provider);
+      })
+      .Sortable(sort => sort.AllowUnsort(false))
+      .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+      .Pageable(pageable => pageable.ButtonCount(5))
+      .DataSource(dataSource => dataSource
+          .Ajax()
+          .Sort(sort => sort.Add(nameof(ClientIdPRestriction.Provider)).Ascending())
+          .PageSize(5)
+          .ServerOperation(false)))
+<hr />
+<h4>
+    <a asp-page="../Index" title="Clients">
+        <i class="fal fa-list"></i> List |
+    </a>
+    <a asp-page="../Edit/IdPRestrictions" asp-route-id="@Model.Client.Id" title="Edit Client Identity Provider Restrictions">
+        <i class="fal fa-edit"></i> Edit
+    </a> |
+    <a asp-page="../Delete" asp-route-id="@Model.Client.Id" title="Delete Client">
+        <i class="fal fa-trash"></i> Delete
+    </a>
+</h4>
+<hr />
+
+@section Scripts {
+    <script id="idPRestrictionsToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-user-slash"></i> Identity Provider Restrictions
+        </h4>
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

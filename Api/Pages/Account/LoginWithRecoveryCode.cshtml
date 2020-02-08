@@ -1,0 +1,42 @@
+﻿@page
+@model LoginWithRecoveryCodeModel
+@{
+    ViewData["Title"] = "Recovery code verification";
+    var routeData = new Dictionary<string, string>
+    {
+        {nameof(Model.ReturnUrl), Model.ReturnUrl},
+        {nameof(Model.Origin), Model.Origin}
+    };
+}
+
+<div class="row">
+    <div class="col">
+        <hr />
+        <h2>
+            <i class="fal fa-sign-in"></i> @ViewData["Title"]
+        </h2>
+        <hr />
+        <p>
+            You have requested to log in with a recovery code. This login will not be remembered until you provide
+            an authenticator app code at log in or disable 2FA and log in again.
+        </p>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <form method="post" asp-all-route-data="@routeData">
+            <div class="form-group">
+                <label asp-for="Input.RecoveryCode"></label>
+                <input asp-for="Input.RecoveryCode" class="form-control" placeholder="Recovery Code" autocomplete="off" />
+                <span asp-validation-for="Input.RecoveryCode" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Log in</button>
+        </form>
+        <div asp-validation-summary="All" class="text-danger"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="Shared/_ValidationScriptsPartial" />
+}

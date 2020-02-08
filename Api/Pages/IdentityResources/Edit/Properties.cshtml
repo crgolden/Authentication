@@ -1,0 +1,97 @@
+﻿@page "{id:int}"
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model PropertiesModel
+
+@{
+    ViewData["Title"] = $"Edit \"{Model.IdentityResource.Name}\" Properties";
+}
+
+<form method="post">
+    <input type="hidden" asp-for="IdentityResource.Id" />
+    @{
+        var identityResourceProperties = Model.Properties.ToArray();
+        for (var i = 0; i < identityResourceProperties.Length; i++)
+        {
+            <input type="hidden" name="IdentityResource.Properties[@i].Id" value="@identityResourceProperties[i].Id" />
+            <input type="hidden" name="IdentityResource.Properties[@i].Key" value="@identityResourceProperties[i].Key" />
+            <input type="hidden" name="IdentityResource.Properties[@i].Value" value="@identityResourceProperties[i].Value" />
+        }
+    }
+    @(Html.Kendo().Grid(Model.Properties)
+          .Name("propertiesGrid")
+          .ToolBar(toolbar => toolbar.ClientTemplateId("propertiesToolbarTemplate"))
+          .Editable(editable => editable
+              .Mode(GridEditMode.InCell)
+              .DisplayDeleteConfirmation(false))
+          .Columns(columns =>
+          {
+              columns.Bound(identityResourceProperty => identityResourceProperty.Key);
+              columns.Bound(identityResourceProperty => identityResourceProperty.Value);
+              columns.Command(command => command.Destroy()).Width(200);
+          })
+          .Sortable(sort => sort.AllowUnsort(false))
+          .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+          .Pageable(pageable => pageable.ButtonCount(5))
+          .DataSource(dataSource => dataSource
+              .Ajax()
+              .Model(model => model.Id(identityResourceProperty => identityResourceProperty.Id))
+              .Events(events => events.Change("propertiesChange"))
+              .Sort(sort => sort.Add(nameof(IdentityResourceProperty.Key)).Ascending())
+              .PageSize(5)
+              .Batch(true)
+              .ServerOperation(false)))
+    <hr />
+    <div class="form-group">
+        <h4>
+            <button type="submit" class="btn btn-primary" title="Save Identity Resource Properties">
+                Save
+            </button> |
+            <a asp-page="../Details/Properties" asp-route-id="@Model.IdentityResource.Id" title="Identity Resource Properties">
+                <i class="fal fa-info-square"></i> Details
+            </a> |
+            <a asp-page="../Index" title="Identity Resources">
+                <i class="fal fa-list"></i> List
+            </a>
+        </h4>
+        <hr />
+    </div>
+</form>
+
+@section Scripts {
+    <script id="propertiesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-cog"></i> Properties
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script type="text/javascript">
+        function propertiesChange(event) {
+            $('input[name^="IdentityResource.Properties"]').remove();
+            $('form').append(event.sender.data().filter(property => {
+                return property.Key.length > 0 && property.Value.length > 0;
+            }).reduce((inputs, property, index) => {
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `IdentityResource.Properties[${index}].Id`,
+                    value: property.Id
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `IdentityResource.Properties[${index}].Key`,
+                    value: property.Key
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `IdentityResource.Properties[${index}].Value`,
+                    value: property.Value
+                }));
+                return inputs;
+            }, []));
+        }
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

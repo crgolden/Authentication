@@ -1,0 +1,84 @@
+﻿@page "{id:int}"
+@using Kendo.Mvc.UI
+@model IndexModel
+
+@{
+    ViewData["Title"] = $"\"{Model.ApiResource.Name}\" Details";
+}
+
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("ApiResource.Enabled")
+                  .Enable(false)
+                  .Label("Enabled")
+                  .Checked(Model.ApiResource.Enabled))
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("ApiResource.NonEditable")
+                  .Enable(false)
+                  .Label("Non-editable")
+                  .Checked(Model.ApiResource.NonEditable))
+        </div>
+    </div>
+</div>
+<hr/>
+<div class="row">
+    <div class="col-12 col-md-6">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.ApiResource.Name)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.ApiResource.Name)
+            </dd>
+            @{
+                if (!string.IsNullOrEmpty(Model.ApiResource.DisplayName))
+                {
+                    <dt>
+                        @Html.LabelFor(model => model.ApiResource.DisplayName, "Display Name")
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.ApiResource.DisplayName)
+                    </dd>
+                }
+            }
+        </dl>
+    </div>
+    <div class="col-12 col-md-6">
+        @{
+            if (!string.IsNullOrEmpty(Model.ApiResource.Description))
+            {
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.ApiResource.Description)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.ApiResource.Description)
+                    </dd>
+                </dl>
+            }
+        }
+    </div>
+</div>
+<hr/>
+<div class="row">
+    <div class="col">
+        <h4>
+            <a asp-page="../Index" title="API Resources">
+                <i class="fal fa-list"></i> List |
+            </a>
+            <a asp-page="../Edit/Index" asp-route-id="@Model.ApiResource.Id" title="Edit API Resource Details">
+                <i class="fal fa-edit"></i> Edit
+            </a> |
+            <a asp-page="../Delete" asp-route-id="@Model.ApiResource.Id" title="Delete API Resource">
+                <i class="fal fa-trash"></i> Delete
+            </a>
+        </h4>
+    </div>
+</div>
+<hr/>

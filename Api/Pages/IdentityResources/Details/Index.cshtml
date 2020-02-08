@@ -1,0 +1,115 @@
+﻿@page "{id:int}"
+@using Kendo.Mvc.UI
+@model IndexModel
+
+@{
+    ViewData["Title"] = $"\"{Model.IdentityResource.Name}\" Details";
+}
+
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("IdentityResource.Enabled")
+                  .Enable(false)
+                  .Label("Enabled")
+                  .Checked(Model.IdentityResource.Enabled))
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("IdentityResource.Required")
+                  .Enable(false)
+                  .Label("Required")
+                  .Checked(Model.IdentityResource.Required))
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("IdentityResource.Emphasize")
+                  .Enable(false)
+                  .Label("Emphasize")
+                  .Checked(Model.IdentityResource.Emphasize))
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("IdentityResource.ShowInDiscoveryDocument")
+                  .Enable(false)
+                  .Label("Show in Discovery Document")
+                  .Checked(Model.IdentityResource.ShowInDiscoveryDocument))
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("IdentityResource.NonEditable")
+                  .Enable(false)
+                  .Label("Non-editable")
+                  .Checked(Model.IdentityResource.NonEditable))
+        </div>
+    </div>
+</div>
+<hr/>
+<div class="row">
+    <div class="col-12 col-md-6">
+        <dl>
+            <dt>
+                @Html.DisplayNameFor(model => model.IdentityResource.Name)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.IdentityResource.Name)
+            </dd>
+            @{
+                if (!string.IsNullOrEmpty(Model.IdentityResource.DisplayName))
+                {
+                    <dt>
+                        @Html.LabelFor(model => model.IdentityResource.DisplayName, "Display Name")
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.IdentityResource.DisplayName)
+                    </dd>
+                }
+            }
+        </dl>
+    </div>
+    <div class="col-12 col-md-6">
+        @{
+            if (!string.IsNullOrEmpty(Model.IdentityResource.Description))
+            {
+                <dl>
+                    <dt>
+                        @Html.DisplayNameFor(model => model.IdentityResource.Description)
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.IdentityResource.Description)
+                    </dd>
+                </dl>
+            }
+        }
+    </div>
+</div>
+<hr/>
+<div class="row">
+    <div class="col">
+        <h4>
+            <a asp-page="../Index" title="Identity Resources">
+                <i class="fal fa-list"></i> List |
+            </a>
+            <a asp-page="../Edit/Index" asp-route-id="@Model.IdentityResource.Id" title="Edit Identity Resource Details">
+                <i class="fal fa-edit"></i> Edit
+            </a> |
+            <a asp-page="../Delete" asp-route-id="@Model.IdentityResource.Id" title="Delete Identity Resource">
+                <i class="fal fa-trash"></i> Delete
+            </a>
+        </h4>
+    </div>
+</div>
+<hr/>

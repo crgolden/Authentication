@@ -1,0 +1,90 @@
+﻿@page "{id:int}"
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model IdPRestrictionsModel
+
+@{
+    ViewData["Title"] = $"Edit \"{Model.Client.ClientName}\" Identity Provider Restrictions";
+}
+
+<form method="post">
+    <input type="hidden" asp-for="Client.Id" />
+    @{
+        var clientIdPRestrictions = Model.IdPRestrictions.ToArray();
+        for (var i = 0; i < clientIdPRestrictions.Length; i++)
+        {
+            <input type="hidden" name="Client.IdentityProviderRestrictions[@i].Id" value="@clientIdPRestrictions[i].Id" />
+            <input type="hidden" name="Client.IdentityProviderRestrictions[@i].Provider" value="@clientIdPRestrictions[i].Provider" />
+        }
+    }
+    @(Html.Kendo().Grid(Model.IdPRestrictions)
+          .Name("idPRestrictionsGrid")
+          .ToolBar(toolbar => toolbar.ClientTemplateId("idPRestrictionsToolbarTemplate"))
+          .Editable(editable => editable
+              .Mode(GridEditMode.InCell)
+              .DisplayDeleteConfirmation(false))
+          .Columns(columns =>
+          {
+              columns.Bound(clientIdPRestriction => clientIdPRestriction.Provider);
+              columns.Command(command => command.Destroy()).Width(200);
+          })
+          .Sortable(sort => sort.AllowUnsort(false))
+          .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+          .Pageable(pageable => pageable.ButtonCount(5))
+          .DataSource(dataSource => dataSource
+              .Ajax()
+              .Model(model => model.Id(clientIdPRestriction => clientIdPRestriction.Id))
+              .Events(events => events.Change("idPRestrictionsChange"))
+              .Sort(sort => sort.Add(nameof(ClientIdPRestriction.Provider)).Ascending())
+              .PageSize(5)
+              .Batch(true)
+              .ServerOperation(false)))
+    <hr />
+    <div class="form-group">
+        <h4>
+            <button type="submit" class="btn btn-primary" title="Save Client Identity Provider Restrictions">
+                Save
+            </button> |
+            <a asp-page="../Details/IdPRestrictions" asp-route-id="@Model.Client.Id" title="Client Identity Provider Restrictions">
+                <i class="fal fa-info-square"></i> Details
+            </a> |
+            <a asp-page="../Index" title="Clients">
+                <i class="fal fa-list"></i> List
+            </a>
+        </h4>
+        <hr />
+    </div>
+</form>
+
+@section Scripts {
+    <script id="idPRestrictionsToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-user-slash"></i> Identity Provider Restrictions
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script type="text/javascript">
+        function idPRestrictionsChange(event) {
+            $('input[name^="Client.IdentityProviderRestrictions"]').remove();
+            $('form').append(event.sender.data().filter(idPRestriction => {
+                return idPRestriction.Provider.length > 0;
+            }).reduce((inputs, idPRestriction, index) => {
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Client.IdentityProviderRestrictions[${index}].Id`,
+                    value: idPRestriction.Id
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Client.IdentityProviderRestrictions[${index}].Provider`,
+                    value: idPRestriction.Provider
+                }));
+                return inputs;
+            }, []));
+        }
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

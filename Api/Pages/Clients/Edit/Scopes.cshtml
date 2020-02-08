@@ -1,0 +1,89 @@
+﻿@page "{id:int}"
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model ScopesModel
+
+@{
+    ViewData["Title"] = $"Edit \"{Model.Client.ClientName}\" Scopes";
+}
+
+<form method="post">
+    <input type="hidden" asp-for="Client.Id" />
+    @{
+        var clientScopes = Model.Scopes.ToArray();
+        for (var i = 0; i < clientScopes.Length; i++)
+        {
+            <input type="hidden" name="Client.AllowedScopes[@i].Id" value="@clientScopes[i].Id" />
+            <input type="hidden" name="Client.AllowedScopes[@i].Scope" value="@clientScopes[i].Scope" />
+        }
+    }
+    @(Html.Kendo().Grid(Model.Scopes)
+          .Name("scopesGrid")
+          .ToolBar(toolbar => toolbar.ClientTemplateId("scopesToolbarTemplate"))
+          .Editable(editable => editable
+              .Mode(GridEditMode.InCell)
+              .DisplayDeleteConfirmation(false))
+          .Columns(columns =>
+          {
+              columns.Bound(clientScope => clientScope.Scope);
+              columns.Command(command => command.Destroy()).Width(200);
+          })
+          .Sortable(sort => sort.AllowUnsort(false))
+          .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+          .Pageable(pageable => pageable.ButtonCount(5))
+          .DataSource(dataSource => dataSource
+              .Ajax()
+              .Model(model => model.Id(clientScope => clientScope.Id))
+              .Sort(sort => sort.Add(nameof(ClientScope.Scope)).Ascending())
+              .Events(events => events.Change("scopesChange"))
+              .PageSize(5)
+              .Batch(true)
+              .ServerOperation(false)))
+    <hr/>
+    <h4>
+        <button type="submit" title="Save Client Scopes" class="btn btn-primary">
+            Save
+        </button> |
+        <a asp-page="../Details/Scopes" asp-route-id="@Model.Client.Id" title="Client Scopes">
+            <i class="fal fa-info-square"></i> Details
+        </a> |
+        <a asp-page="../Index" title="Clients">
+            <i class="fal fa-list"></i> List
+        </a>
+    </h4>
+    <hr/>
+</form>
+
+@section Scripts {
+<script id="scopesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-globe"></i> Scopes
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script type="text/javascript">
+        const scopesChange = function (event) {
+            $('input[name^="Client.AllowedScopes"]').remove();
+            $('form').append(event.sender.data().filter(scope => {
+                return scope.Scope.length;
+            }).reduce((inputs, scope, index) => {
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Client.AllowedScopes[${index}].Id`,
+                    value: scope.Id
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Client.AllowedScopes[${index}].Scope`,
+                    value: scope.Scope
+                }));
+                return inputs;
+            }, []));
+        };
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

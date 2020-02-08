@@ -1,0 +1,40 @@
+﻿@page
+@model VerifyEmailModel
+@{
+    ViewData["Title"] = "Verify Email";
+    var routeData = new Dictionary<string, string>
+    {
+        {nameof(Model.Email), Model.Email},
+        {nameof(Model.ReturnUrl), Model.ReturnUrl},
+        {nameof(Model.Origin), Model.Origin}
+    };
+}
+
+<div class="row">
+    <div class="col">
+        <hr />
+        <h2>
+            <i class="fal fa-at"></i> @ViewData["Title"]
+        </h2>
+        <hr />
+        <p>
+            Please verify your email address to login.
+        </p>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <form method="post" asp-all-route-data="@routeData">
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">
+                    Resend verification email
+                </button>
+            </div>
+        </form>
+        @if (!string.IsNullOrEmpty(Model.SuccessMessage))
+        {
+            <span class="text-success">@Model.SuccessMessage</span>
+        }
+    </div>
+</div>

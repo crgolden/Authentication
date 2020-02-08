@@ -1,0 +1,48 @@
+﻿@page "{id:int}"
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model PropertiesModel
+
+@{
+    ViewData["Title"] = $"\"{Model.IdentityResource.Name}\" Properties";
+}
+
+@(Html.Kendo().Grid(Model.Properties)
+      .Name("propertiesGrid")
+      .ToolBar(toolbar => toolbar.ClientTemplateId("propertiesToolbarTemplate"))
+      .Columns(columns =>
+      {
+          columns.Bound(identityResourceProperty => identityResourceProperty.Key);
+          columns.Bound(identityResourceProperty => identityResourceProperty.Value);
+      })
+      .Sortable(sort => sort.AllowUnsort(false))
+      .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+      .Pageable(pageable => pageable.ButtonCount(5))
+      .DataSource(dataSource => dataSource
+          .Ajax()
+          .Sort(sort => sort.Add(nameof(IdentityResourceProperty.Key)).Ascending())
+          .PageSize(5)
+          .ServerOperation(false)))
+<hr />
+<h4>
+    <a asp-page="../Index" title="Identity Resources">
+        <i class="fal fa-list"></i> List |
+    </a>
+    <a asp-page="../Edit/Properties" asp-route-id="@Model.IdentityResource.Id" title="Edit Identity Resource Properties">
+        <i class="fal fa-edit"></i> Edit
+    </a> |
+    <a asp-page="../Delete" asp-route-id="@Model.IdentityResource.Id" title="Delete Identity Resource">
+        <i class="fal fa-trash"></i> Delete
+    </a>
+</h4>
+<hr />
+
+@section Scripts {
+    <script id="propertiesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-cog"></i> Properties
+        </h4>
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

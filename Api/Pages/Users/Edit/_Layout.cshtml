@@ -1,0 +1,25 @@
+﻿@{
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col">
+        <hr />
+        <h2>
+            <i class="fal fa-user"></i> @ViewData["Title"]
+        </h2>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        <partial name="_Nav" />
+    </div>
+    <div class="col-md-9">
+        @RenderBody()
+    </div>
+</div>
+
+@section Scripts {
+    @await RenderSectionAsync("Scripts", required: false)
+}

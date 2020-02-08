@@ -1,0 +1,90 @@
+﻿@page "{id:int}"
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model GrantTypesModel
+
+@{
+    ViewData["Title"] = $"Edit \"{Model.Client.ClientName}\" Grant Types";
+}
+
+<form method="post">
+    <input type="hidden" asp-for="Client.Id" />
+    @{
+        var clientGrantTypes = Model.GrantTypes.ToArray();
+        for (var i = 0; i < clientGrantTypes.Length; i++)
+        {
+            <input type="hidden" name="Client.AllowedGrantTypes[@i].Id" value="@clientGrantTypes[i].Id" />
+            <input type="hidden" name="Client.AllowedGrantTypes[@i].GrantType" value="@clientGrantTypes[i].GrantType" />
+        }
+    }
+    @(Html.Kendo().Grid(Model.GrantTypes)
+          .Name("grantTypesGrid")
+          .ToolBar(toolbar => toolbar.ClientTemplateId("grantTypesToolbarTemplate"))
+          .Editable(editable => editable
+              .Mode(GridEditMode.InCell)
+              .DisplayDeleteConfirmation(false))
+          .Columns(columns =>
+          {
+              columns.Bound(clientGrantType => clientGrantType.GrantType);
+              columns.Command(command => command.Destroy()).Width(200);
+          })
+          .Sortable(sort => sort.AllowUnsort(false))
+          .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+          .Pageable(pageable => pageable.ButtonCount(5))
+          .DataSource(dataSource => dataSource
+              .Ajax()
+              .Model(model => model.Id(clientGrantType => clientGrantType.Id))
+              .Events(events => events.Change("grantTypesChange"))
+              .Sort(sort => sort.Add(nameof(ClientGrantType.GrantType)).Ascending())
+              .PageSize(5)
+              .Batch(true)
+              .ServerOperation(false)))
+    <hr />
+    <div class="form-group">
+        <h4>
+            <button type="submit" class="btn btn-primary" title="Save Client Grant Types">
+                Save
+            </button> |
+            <a asp-page="../Details/GrantTypes" asp-route-id="@Model.Client.Id" title="Client Grant Types">
+                <i class="fal fa-info-square"></i> Details
+            </a> |
+            <a asp-page="../Index" title="Clients">
+                <i class="fal fa-list"></i> List
+            </a>
+        </h4>
+        <hr />
+    </div>
+</form>
+
+@section Scripts {
+    <script id="grantTypesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-atlas"></i> Grant Types
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script type="text/javascript">
+        function grantTypesChange(event) {
+            $('input[name^="Client.AllowedGrantTypes"]').remove();
+            $('form').append(event.sender.data().filter(grantType => {
+                return grantType.GrantType.length > 0;
+            }).reduce((inputs, grantType, index) => {
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Client.AllowedGrantTypes[${index}].Id`,
+                    value: grantType.Id
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Client.AllowedGrantTypes[${index}].GrantType`,
+                    value: grantType.GrantType
+                }));
+                return inputs;
+            }, []));
+        }
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,19 @@
+﻿@page
+@model LockoutModel
+@{
+    ViewData["Title"] = "Locked out";
+}
+
+<div class="row">
+    <div class="col">
+        <hr />
+        <h2>
+            <i class="fal fa-user-lock"></i> @ViewData["Title"]
+        </h2>
+        <hr />
+        <p class="text-danger">
+            This account has been locked out, please try again later.
+        </p>
+        <hr />
+    </div>
+</div>

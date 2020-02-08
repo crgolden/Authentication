@@ -1,0 +1,96 @@
+﻿@page "{id:guid}"
+@using Kendo.Mvc.UI
+@model ClaimsModel
+
+@{
+    ViewData["Title"] = $"Edit \"{Model.Role.Name}\" Claims";
+}
+
+<form method="post">
+    <input type="hidden" asp-for="Role.Id" />
+    @{
+        var roleClaims = Model.Claims.ToArray();
+        for (var i = 0; i < roleClaims.Length; i++)
+        {
+            <input type="hidden" name="Role.RoleClaims[@i].Id" value="@roleClaims[i].Id" />
+            <input type="hidden" name="Role.RoleClaims[@i].ClaimType" value="@roleClaims[i].ClaimType" />
+            <input type="hidden" name="Role.RoleClaims[@i].ClaimValue" value="@roleClaims[i].ClaimValue" />
+        }
+    }
+    @(Html.Kendo().Grid(Model.Claims)
+          .Name("claimsGrid")
+          .ToolBar(toolbar => toolbar.ClientTemplateId("claimsToolbarTemplate"))
+          .Editable(editable => editable
+              .Mode(GridEditMode.InCell)
+              .DisplayDeleteConfirmation(false))
+          .Columns(columns =>
+          {
+              columns.Bound(roleClaim => roleClaim.ClaimType);
+              columns.Bound(roleClaim => roleClaim.ClaimValue);
+              columns.Command(command => command.Destroy()).Width(200);
+          })
+          .Sortable(sort => sort.AllowUnsort(false))
+          .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+          .Pageable(pageable => pageable.ButtonCount(5))
+          .DataSource(dataSource => dataSource
+              .Ajax()
+              .Model(model => model.Id(roleClaim => roleClaim.Id))
+              .Events(events => events.Change("claimsChange"))
+              .Sort(sort => sort.Add(nameof(Core.Entities.RoleClaim.ClaimType)).Ascending())
+              .PageSize(5)
+              .Batch(true)
+              .ServerOperation(false)))
+    <hr />
+    <div class="form-group">
+        <h4>
+            <button type="submit" class="btn btn-primary" title="Save Role Claims">
+                Save
+            </button> |
+            <a asp-page="../Details/Claims" asp-route-id="@Model.Role.Id" title="Role Claims">
+                <i class="fal fa-info-square"></i> Details
+            </a> |
+            <a asp-page="../Index" title="Roles">
+                <i class="fal fa-list"></i> List
+            </a>
+        </h4>
+        <hr />
+    </div>
+</form>
+
+@section Scripts {
+    <script id="claimsToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-id-card"></i> Claims
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add Claim
+            </button>
+        </h4>
+    </script>
+
+    <script type="text/javascript">
+        function claimsChange(event) {
+            $('input[name^="Role.RoleClaims"]').remove();
+            $('form').append(event.sender.data().filter(claim => {
+                return claim.ClaimType.length > 0 && claim.ClaimValue.length > 0;
+            }).reduce((inputs, claim, index) => {
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Role.RoleClaims[${index}].Id`,
+                    value: claim.Id
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Role.RoleClaims[${index}].ClaimType`,
+                    value: claim.ClaimType
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Role.RoleClaims[${index}].ClaimValue`,
+                    value: claim.ClaimValue
+                }));
+                return inputs;
+            }, []));
+        }
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

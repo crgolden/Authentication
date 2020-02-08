@@ -1,0 +1,47 @@
+﻿@page
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model IndexModel
+
+@{
+    ViewData["Title"] = "Device Flow Codes";
+}
+
+<div class="row">
+    <div class="col">
+        <hr />
+            <h2>
+                <i class="fal fa-passport"></i> @ViewData["Title"]
+            </h2>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        @(Html.Kendo().Grid(Model.DeviceFlowCodes)
+              .Name("deviceFlowCodesGrid")
+              .Columns(columns =>
+              {
+                  columns.Bound(deviceFlowCode => deviceFlowCode.UserCode);
+                  columns.Bound(deviceFlowCode => deviceFlowCode.DeviceCode);
+              })
+              .Sortable(sort => sort.AllowUnsort(false))
+              .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+              .Pageable(pageable => pageable.ButtonCount(5))
+              .DataSource(dataSource => dataSource
+                  .Ajax()
+                  .Sort(sort => sort.Add(nameof(DeviceFlowCodes.UserCode)).Ascending())
+                  .PageSize(5)
+                  .ServerOperation(false))
+              .ClientRowTemplate(
+                  "<tr data-uid='#: uid #'>" +
+                  "<td>" +
+                  "<a href='/device-flow-codes/details/#:data.UserCode#'>#:data.UserCode#</a>" +
+                  "</td>" +
+                  "<td>" +
+                  "#:data.DeviceCode#" +
+                  "</td>" +
+                  "</tr>"))
+        <hr/>
+    </div>
+</div>

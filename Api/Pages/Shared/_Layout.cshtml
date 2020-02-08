@@ -1,0 +1,179 @@
+﻿@using Core.Entities
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<User> SignInManager
+
+@{
+    var activePath = ViewContext.ActionDescriptor.DisplayName;
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>
+        crgolden@{if (!string.IsNullOrEmpty((string)ViewData["Title"]))
+            { <text>: @ViewData["Title"] </text> }}
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap-4.0.0/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/telerik.ui.for.aspnet.core.2019.1.220/styles/kendo.bootstrap-v4.min.css" />
+        <link rel="stylesheet" href="~/lib/fontawesome-5.8.1/css/all.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css"
+              asp-fallback-href="~/lib/bootstrap-4.0.0/css/bootstrap.min.css"
+              asp-fallback-test-class="sr-only"
+              asp-fallback-test-property="position"
+              asp-fallback-test-value="absolute"
+              crossorigin="anonymous"
+              integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" />
+        <link rel="stylesheet"
+              href="https://kendo.cdn.telerik.com/2019.1.220/styles/kendo.bootstrap-v4.min.css"
+              asp-fallback-href="~/lib/telerik.ui.for.aspnet.core.2019.1.220/styles/kendo.bootstrap-v4.min.css"
+              asp-fallback-test-class="k-common-test-class"
+              asp-fallback-test-property="opacity"
+              asp-fallback-test-value="0" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+    </environment>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/popper.js/umd/popper.js"></script>
+        <script src="~/lib/bootstrap-4.0.0/js/bootstrap.bundle.js"></script>
+        <script src="~/lib/telerik.ui.for.aspnet.core.2019.1.220/js/kendo.all.min.js"></script>
+        <script src="~/lib/telerik.ui.for.aspnet.core.2019.1.220/js/kendo.aspnetmvc.min.js"></script>
+        <script src="~/js/site.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="https://kit.fontawesome.com/c4c0510599.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+                asp-fallback-src="~/lib/popper.js/umd/popper.min.js"
+                asp-fallback-test="window.Popper"
+                crossorigin="anonymous"
+                integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q">
+        </script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"
+                asp-fallback-src="~/lib/bootstrap-4.0.0/js/bootstrap.bundle.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha256-E/V4cWE4qvAeO5MOhjtGtqDzPndRO1LBk8lJ/PR7CA4=">
+        </script>
+        <script src="https://kendo.cdn.telerik.com/2019.1.220/js/kendo.all.min.js"
+                asp-fallback-src="~/lib/telerik.ui.for.aspnet.core.2019.1.220/js/kendo.all.min.js"
+                asp-fallback-test="window.kendo">
+        </script>
+        <script src="https://kendo.cdn.telerik.com/2019.1.220/js/kendo.aspnetmvc.min.js"
+                asp-fallback-src="~/lib/telerik.ui.for.aspnet.core.2019.1.220/js/kendo.aspnetmvc.min.js"
+                asp-fallback-test="kendo.data.transports['aspnetmvc-ajax']">
+        </script>
+        <script src="~/js/site.min.js"></script>
+    </environment>
+
+</head>
+<body>
+    <nav class="navbar container fixed-top navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand"
+           href="@(ViewData["Origin"] ?? "/")"
+           title="crgolden">crgolden</a>
+        @{
+            if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+            {
+                <button type="button"
+                        class="navbar-toggler"
+                        data-toggle="collapse"
+                        data-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div id="navbarSupportedContent"
+                     class="collapse navbar-collapse">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link @(string.Equals(activePath, "/Users/Index", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+                               asp-page="/Users/Index"
+                               title="Users">
+                                <i class="fal fa-user"></i> Users
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(string.Equals(activePath, "/Roles/Index", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+                               asp-page="/Roles/Index"
+                               title="Roles">
+                                <i class="fal fa-id-badge"></i> Roles
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(string.Equals(activePath, "/IdentityResources/Index", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+                               asp-page="/IdentityResources/Index"
+                               title="Identity Resources">
+                                <i class="fal fa-book-user"></i> Identity Resources
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(string.Equals(activePath, "/ApiResources/Index", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+                               asp-page="/ApiResources/Index"
+                               title="API Resources">
+                                <i class="fal fa-database"></i> API Resources
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(string.Equals(activePath, "/Clients/Index", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+                               asp-page="/Clients/Index"
+                               title="Clients">
+                                <i class="fal fa-mobile"></i> Clients
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(string.Equals(activePath, "/DeviceFlowCodes/Index", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+                               asp-page="/DeviceFlowCodes/Index"
+                               title="Device Flow Codes">
+                                <i class="fal fa-passport"></i> Device Flow Codes
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(string.Equals(activePath, "/PersistedGrants/Index", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+                               asp-page="/PersistedGrants/Index"
+                               title="Persisted Grants">
+                                <i class="fal fa-handshake"></i> Persisted Grants
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-page="/Account/Logout"
+                               title="Logout">
+                                <i class="fal fa-sign-out"></i> Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            }
+        }
+    </nav>
+
+    <partial name="_CookieConsentPartial" />
+
+    <div class="container py-5">
+        @RenderBody()
+    </div>
+
+    <nav class="navbar container fixed-bottom navbar-light bg-light">
+        <span class="navbar-brand">
+            &copy;2019 Chris Golden
+        </span>
+    </nav>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

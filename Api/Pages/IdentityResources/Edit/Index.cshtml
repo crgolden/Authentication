@@ -1,0 +1,84 @@
+﻿@page "{id:int}"
+@model IndexModel
+
+@{
+    ViewData["Title"] = $"Edit \"{Model.IdentityResource.Name}\" Details";
+}
+
+<form method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <input type="hidden" asp-for="IdentityResource.Id" />
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <input asp-for="IdentityResource.Enabled" class="k-checkbox" />
+            <label asp-for="IdentityResource.Enabled" class="k-checkbox-label font-weight-bold"></label>
+        </div>
+        <div class="col-12 col-md-6">
+            <input asp-for="IdentityResource.Required" class="k-checkbox" />
+            <label asp-for="IdentityResource.Required" class="k-checkbox-label font-weight-bold"></label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <input asp-for="IdentityResource.Emphasize" class="k-checkbox" />
+            <label asp-for="IdentityResource.Emphasize" class="k-checkbox-label font-weight-bold"></label>
+        </div>
+        <div class="col-12 col-md-6">
+            <input asp-for="IdentityResource.ShowInDiscoveryDocument" class="k-checkbox" />
+            <label asp-for="IdentityResource.ShowInDiscoveryDocument" class="k-checkbox-label font-weight-bold">
+                Show in discovery document
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <input asp-for="IdentityResource.NonEditable" class="k-checkbox" />
+            <label asp-for="IdentityResource.NonEditable" class="k-checkbox-label font-weight-bold">
+                Non-editable
+            </label>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <label asp-for="IdentityResource.Name" class="font-weight-bold"></label>
+                <input asp-for="IdentityResource.Name" class="form-control" required />
+                <span asp-validation-for="IdentityResource.Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IdentityResource.DisplayName" class="font-weight-bold">
+                    Display Name
+                </label>
+                <input asp-for="IdentityResource.DisplayName" class="form-control" />
+            </div>
+        </div>
+        <div class="col-12 col-md-6">
+            <div class="form-group">
+                <label asp-for="IdentityResource.Description" class="font-weight-bold"></label>
+                <textarea asp-for="IdentityResource.Description" class="form-control"></textarea>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col">
+            <h4>
+                <button type="submit" class="btn btn-primary" title="Save Identity Resource Details">
+                    Save
+                </button> |
+                <a asp-page="../Details/Index" asp-route-id="@Model.IdentityResource.Id" title="Identity Resource Details">
+                    <i class="fal fa-info-square"></i> Details
+                </a> |
+                <a asp-page="../Index" title="Identity Resources">
+                    <i class="fal fa-list"></i> List
+                </a>
+            </h4>
+        </div>
+    </div>
+    <hr />
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,613 @@
+﻿@page
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model CreateModel
+
+@{
+    ViewData["Title"] = "Create API Resource";
+}
+
+<div class="row">
+    <div class="col">
+        <hr />
+        <h2>
+            <i class="fal fa-database"></i> @ViewData["Title"]
+        </h2>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <form method="post" id="apiResource">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <input asp-for="ApiResource.Enabled" class="k-checkbox" />
+                    <label asp-for="ApiResource.Enabled" class="k-checkbox-label"></label>
+                </div>
+                <div class="col-12 col-md-6">
+                    <input asp-for="ApiResource.NonEditable" class="k-checkbox" />
+                    <label asp-for="ApiResource.NonEditable" class="k-checkbox-label">
+                        Non-editable
+                    </label>
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ApiResource.Name"></label>
+                        <input asp-for="ApiResource.Name" class="form-control" required />
+                        <span asp-validation-for="ApiResource.Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="ApiResource.DisplayName">
+                            Display Name
+                        </label>
+                        <input asp-for="ApiResource.DisplayName" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="form-group">
+                        <label asp-for="ApiResource.Description"></label>
+                        <textarea asp-for="ApiResource.Description" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <hr />
+                    @(Html.Kendo().Grid(new List<ApiResourceClaim>())
+                          .Name("claimTypesGrid")
+                          .ToolBar(toolbar => toolbar.ClientTemplateId("claimTypesToolbarTemplate"))
+                          .Editable(editable => editable
+                              .Mode(GridEditMode.InCell)
+                              .DisplayDeleteConfirmation(false))
+                          .Columns(columns =>
+                          {
+                              columns.Bound(apiResourceClaimType => apiResourceClaimType.Type);
+                              columns.Command(command => command.Destroy()).Width(200);
+                          })
+                          .Pageable(pageable => pageable.ButtonCount(5))
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .Events(events => events.Change("claimTypesChange"))
+                              .PageSize(5)
+                              .Batch(true)
+                              .ServerOperation(false)))
+                </div>
+                <div class="col-12 col-md-6">
+                    <hr />
+                    @(Html.Kendo().Grid(new List<ApiResourceProperty>())
+                          .Name("propertiesGrid")
+                          .ToolBar(toolbar => toolbar.ClientTemplateId("propertiesToolbarTemplate"))
+                          .Editable(editable => editable
+                              .Mode(GridEditMode.InCell)
+                              .DisplayDeleteConfirmation(false))
+                          .Columns(columns =>
+                          {
+                              columns.Bound(apiResourceProperty => apiResourceProperty.Key);
+                              columns.Bound(apiResourceProperty => apiResourceProperty.Value);
+                              columns.Command(command => command.Destroy()).Width(200);
+                          })
+                          .Pageable(pageable => pageable.ButtonCount(5))
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .Events(events => events.Change("propertiesChange"))
+                              .PageSize(5)
+                              .Batch(true)
+                              .ServerOperation(false)))
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <hr />
+                    @(Html.Kendo().Grid(new List<ApiScope>())
+                          .Name("scopesGrid")
+                          .ToolBar(toolbar => toolbar.ClientTemplateId("scopesToolbarTemplate"))
+                          .Editable(editable => editable
+                              .Mode(GridEditMode.InCell)
+                              .DisplayDeleteConfirmation(false))
+                          .Columns(columns =>
+                          {
+                              columns.Bound(apiResourceScope => apiResourceScope.Name);
+                              columns.Bound(apiResourceScope => apiResourceScope.DisplayName);
+                              columns.Command(command =>
+                              {
+                                  command.Custom("Edit").IconClass("k-icon k-i-edit").Click("scopeEdit");
+                                  command.Destroy();
+                              }).Width(200);
+                          })
+                          .Pageable(pageable => pageable.ButtonCount(5))
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .Model(model => model.Field(apiResourceScope => apiResourceScope.Name).Editable(false))
+                              .Events(events => events.Change("scopesChange"))
+                              .PageSize(5)
+                              .Batch(true)
+                              .ServerOperation(false)))
+                </div>
+                <div class="col-12 col-md-6">
+                    <hr />
+                    @(Html.Kendo().Grid(new List<ApiSecret>())
+                          .Name("secretsGrid")
+                          .ToolBar(toolbar => toolbar.ClientTemplateId("secretsToolbarTemplate"))
+                          .Editable(editable => editable
+                              .Mode(GridEditMode.InCell)
+                              .DisplayDeleteConfirmation(false))
+                          .Columns(columns =>
+                          {
+                              columns.Bound(apiResourceSecret => apiResourceSecret.Type);
+                              columns.Bound(apiResourceSecret => apiResourceSecret.Value);
+                              columns.Command(command =>
+                              {
+                                  command.Custom("Edit").IconClass("k-icon k-i-edit").Click("secretEdit");
+                                  command.Destroy();
+                              }).Width(200);
+                          })
+                          .Pageable(pageable => pageable.ButtonCount(5))
+                          .DataSource(dataSource => dataSource
+                              .Ajax()
+                              .Model(model =>
+                              {
+                                  model.Field(apiResourceSecret => apiResourceSecret.Type).Editable(false);
+                                  model.Field(apiResourceSecret => apiResourceSecret.Value).Editable(false);
+                              })
+                              .Events(events => events.Change("secretsChange"))
+                              .PageSize(5)
+                              .Batch(true)
+                              .ServerOperation(false)))
+                </div>
+            </div>
+            <hr />
+            <div class="row">
+                <div class="col">
+                    <h4>
+                        <button type="submit" title="Create API Resource" class="btn btn-primary">
+                            Create
+                        </button> |
+                        <a asp-page="./Index" title="API Resources">
+                            <i class="fal fa-list"></i> List
+                        </a>
+                    </h4>
+                </div>
+            </div>
+            <hr />
+        </form>
+    </div>
+</div>
+
+@(Html.Kendo().Window()
+      .Name("scopeWindow")
+      .Title("Scope")
+      .Visible(false)
+      .Modal(true)
+      .Draggable(true)
+      .Events(events => events.Close("scopeWindowClose"))
+      .Content(@<text>
+                   <form id="scopeForm">
+                       <input id="ApiScopeUid" class="d-none"/>
+                       <div class="row">
+                           <div class="col">
+                               <div class="form-check">
+                                   <input id="ApiScopeRequired" type="checkbox" class="form-check-input"/>
+                                   <label for="ApiScopeRequired" class="form-check-label">
+                                       Required
+                                   </label>
+                               </div>
+                           </div>
+                           <div class="col">
+                               <div class="form-check">
+                                   <input id="ApiScopeEmphasize" type="checkbox" class="form-check-input"/>
+                                   <label for="ApiScopeEmphasize" class="form-check-label">
+                                       Emphasize
+                                   </label>
+                               </div>
+                           </div>
+                       </div>
+                       <div class="row">
+                           <div class="col">
+                               <div class="form-check">
+                                   <input id="ApiScopeShowInDiscoveryDocument" type="checkbox" class="form-check-input"/>
+                                   <label for="ApiScopeShowInDiscoveryDocument" class="form-check-label">
+                                       Show in discovery document
+                                   </label>
+                               </div>
+                           </div>
+                       </div>
+                       <hr/>
+                       <div class="form-group">
+                           <label for="ApiScopeName">Name</label>
+                           <input class="form-control" id="ApiScopeName" name="ApiScopeName" type="text" required>
+                       </div>
+                       <div class="form-group">
+                           <label for="ApiScopeDisplayName">Display Name</label>
+                           <input class="form-control" id="ApiScopeDisplayName" name="ApiScopeDisplayName" type="text">
+                       </div>
+                       <div class="form-group">
+                           <label for="ApiScopeDescription">Description</label>
+                           <textarea class="form-control" id="ApiScopeDescription" name="ApiScopeDescription"></textarea>
+                       </div>
+                       <hr/>
+                       <button type="submit" class="k-button k-button-icontext k-primary k-grid-update">
+                           <span class="k-icon k-i-check"></span>Save
+                       </button>
+                       <button type="reset" class="k-button k-button-icontext k-grid-cancel">
+                           <span class="k-icon k-i-cancel"></span>Cancel
+                       </button>
+                   </form>
+                </text>))
+
+@(Html.Kendo().Window()
+      .Name("secretWindow")
+      .Title("Secret")
+      .Visible(false)
+      .Modal(true)
+      .Draggable(true)
+      .Events(events => events.Close("secretWindowClose"))
+      .Content(@<text>
+                   <form id="secretForm">
+                       <input id="ApiSecretUid" class="d-none"/>
+                       <div class="form-group">
+                           <label for="ApiSecretType">Type</label>
+                           <input class="form-control" id="ApiSecretType" name="ApiSecretType" type="text" required>
+                       </div>
+                       <div class="form-group">
+                           <label for="ApiSecretValue">Value</label>
+                           <input class="form-control" id="ApiSecretValue" name="ApiSecretValue" type="text" required>
+                       </div>
+                       <div class="form-group">
+                           <label for="ApiSecretExpiration">Expiration</label>
+                           <br />
+                           @(Html.Kendo().DatePicker().Name("ApiSecretExpiration"))
+                       </div>
+                       <div class="form-group">
+                           <label for="ApiSecretDescription">Description</label>
+                           <textarea class="form-control" id="ApiSecretDescription" name="ApiSecretDescription"></textarea>
+                       </div>
+                       <hr/>
+                       <button type="submit" class="k-button k-button-icontext k-primary k-grid-update">
+                           <span class="k-icon k-i-check"></span>Save
+                       </button>
+                       <button type="reset" class="k-button k-button-icontext k-grid-cancel">
+                           <span class="k-icon k-i-cancel"></span>Cancel
+                       </button>
+                   </form>
+                </text>))
+
+@section Scripts {
+    <script id="claimTypesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-id-card"></i> Claim Types
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script id="propertiesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-cog"></i> Properties
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script id="scopesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-globe"></i> Scopes
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script id="secretsToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-user-secret"></i> Secrets
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script type="text/javascript">
+        function claimTypesChange(event) {
+            $('input[name^="ApiResource.UserClaims"]').remove();
+            $('#apiResource').append(event.sender.data().filter(claim => {
+                return claim.Type.length > 0;
+            }).reduce((inputs, claim, index) => {
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.UserClaims[${index}].Type`,
+                    value: claim.Type
+                }));
+                return inputs;
+            }, []));
+        }
+
+        function propertiesChange(event) {
+            $('input[name^="ApiResource.Properties"]').remove();
+            $('#apiResource').append(event.sender.data().filter(property => {
+                return property.Key.length > 0 && property.Value.length > 0;
+            }).reduce((inputs, property, index) => {
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Properties[${index}].Key`,
+                    value: property.Key
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Properties[${index}].Value`,
+                    value: property.Value
+                }));
+                return inputs;
+            }, []));
+        }
+
+        let scopeAction;
+        let scopeWindow;
+        let scopeForm;
+        let scopeFormUid;
+        let scopeFormValidator;
+        let scopesGrid;
+
+        const scopesChange = function (event) {
+            switch (event.action) {
+                case 'add':
+                    {
+                        const dataItem = event.sender.at(event.index);
+                        scopeFormUid.val(dataItem.uid);
+                        scopeWindow.open().center();
+                        scopeAction = 'create';
+                    }
+                case 'remove':
+                    {
+                        scopeInputsRefresh();
+                    }
+            }
+        };
+
+        const scopeEdit = function (event) {
+            event.preventDefault();
+            scopeFormReset();
+            scopeFormUpdate();
+            scopeWindow.open().center();
+        };
+
+        const scopeWindowClose = function (event) {
+            if (event.userTriggered) {
+                removeGridScope();
+            }
+            scopeFormReset();
+        };
+
+        const scopeInputsRefresh = function () {
+            $('input[name^="ApiResource.Scopes"]').remove();
+            $('#apiResource').append(scopesGrid.dataSource.data().reduce((inputs, scope, index) => {
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Scopes[${index}].Description`,
+                    value: scope.Description
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Scopes[${index}].DisplayName`,
+                    value: scope.DisplayName
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Scopes[${index}].Emphasize`,
+                    value: scope.Emphasize
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Scopes[${index}].Name`,
+                    value: scope.Name
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Scopes[${index}].Required`,
+                    value: scope.Required
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Scopes[${index}].ShowInDiscoveryDocument`,
+                    value: scope.ShowInDiscoveryDocument
+                }));
+                return inputs;
+            }, []));
+        };
+
+        const scopeFormReset = function () {
+            scopeFormValidator.resetForm();
+            scopeForm.reset();
+            scopeAction = undefined;
+        };
+
+        const scopeFormSubmit = function () {
+            updateGridScope();
+            scopeInputsRefresh();
+            scopeFormReset();
+            scopeWindow.close();
+        };
+
+        const scopeFormUpdate = function() {
+            const row = $(event.toElement).closest('tr');
+            const dataItem = scopesGrid.dataItem(row);
+            scopeFormUid.val(dataItem.uid);
+            $('#ApiScopeDescription').val(dataItem.Description);
+            $('#ApiScopeDisplayName').val(dataItem.DisplayName);
+            $('#ApiScopeEmphasize').prop('checked', dataItem.Emphasize);
+            $('#ApiScopeName').val(dataItem.Name);
+            $('#ApiScopeRequired').prop('checked', dataItem.Required);
+            $('#ApiScopeShowInDiscoveryDocument').prop('checked', dataItem.ShowInDiscoveryDocument);
+        };
+
+        const scopeFormClose = function () {
+            removeGridScope();
+            scopeFormReset();
+            scopeWindow.close();
+        };
+
+        const removeGridScope = function () {
+            if (scopeAction !== 'create') {
+                return;
+            }
+            const uid = scopeFormUid.val();
+            const dataItem = scopesGrid.dataSource.getByUid(uid);
+            scopesGrid.dataSource.remove(dataItem);
+        };
+
+        const updateGridScope = function () {
+            const uid = scopeFormUid.val();
+            const dataItem = scopesGrid.dataSource.getByUid(uid);
+            dataItem.Description = $('#ApiScopeDescription').val();
+            dataItem.DisplayName = $('#ApiScopeDisplayName').val();
+            dataItem.Emphasize = $('#ApiScopeEmphasize').prop('checked');
+            dataItem.Name = $('#ApiScopeName').val();
+            dataItem.Required = $('#ApiScopeRequired').prop('checked');
+            dataItem.ShowInDiscoveryDocument = $('#ApiScopeShowInDiscoveryDocument').prop('checked');
+            scopesGrid.refresh();
+        };
+
+        let secretAction;
+        let secretWindow;
+        let secretForm;
+        let secretFormUid;
+        let secretFormValidator;
+        let secretsGrid;
+
+        function secretsChange(event) {
+            switch (event.action) {
+                case 'add':
+                    {
+                        const dataItem = event.sender.at(event.index);
+                        secretFormUid.val(dataItem.uid);
+                        secretWindow.open().center();
+                        secretAction = 'create';
+                    }
+                case 'remove':
+                    {
+                        secretInputsRefresh();
+                    }
+            }
+        }
+
+        const secretEdit = function (event) {
+            event.preventDefault();
+            secretFormReset();
+            secretFormUpdate();
+            secretWindow.open().center();
+        };
+
+        const secretWindowClose = function (event) {
+            if (event.userTriggered) {
+                removeGridSecret();
+            }
+            secretFormReset();
+        };
+
+        const secretInputsRefresh = function () {
+            $('input[name^="ApiResource.Secrets"]').remove();
+            $('#apiResource').append(secretsGrid.dataSource.data().reduce((inputs, secret, index) => {
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Secrets[${index}].Description`,
+                    value: secret.Description
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Secrets[${index}].Value`,
+                    value: secret.Value
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Secrets[${index}].Expiration`,
+                    value: secret.Expiration
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Secrets[${index}].Type`,
+                    value: secret.Type
+                }));
+                return inputs;
+            }, []));
+        };
+
+        const secretFormReset = function () {
+            secretFormValidator.resetForm();
+            secretForm.reset();
+            secretAction = undefined;
+        };
+
+        const secretFormSubmit = function () {
+            updateGridSecret();
+            secretInputsRefresh();
+            secretFormReset();
+            secretWindow.close();
+        };
+
+        const secretFormUpdate = function () {
+            const row = $(event.toElement).closest('tr');
+            const dataItem = secretsGrid.dataItem(row);
+            secretFormUid.val(dataItem.uid);
+            $('#ApiSecretDescription').val(dataItem.Description);
+            $('#ApiSecretValue').val(dataItem.Value);
+            $('#ApiSecretExpiration').val(dataItem.Expiration);
+            $('#ApiSecretType').val(dataItem.Type);
+        };
+
+        const secretFormClose = function () {
+            removeGridSecret();
+            secretFormReset();
+            secretWindow.close();
+        };
+
+        const removeGridSecret = function () {
+            if (secretAction !== 'create') {
+                return;
+            }
+            const uid = secretFormUid.val();
+            const dataItem = secretsGrid.dataSource.getByUid(uid);
+            secretsGrid.dataSource.remove(dataItem);
+        };
+
+        const updateGridSecret = function () {
+            const uid = secretFormUid.val();
+            const dataItem = secretsGrid.dataSource.getByUid(uid);
+            dataItem.Description = $('#ApiSecretDescription').val();
+            dataItem.Value = $('#ApiSecretValue').val();
+            dataItem.Expiration = $('#ApiSecretExpiration').val();
+            dataItem.Type = $('#ApiSecretType').val();
+            secretsGrid.refresh();
+        };
+
+        $(function () {
+            $.validator.setDefaults({
+                errorClass: 'text-danger'
+            });
+
+            scopesGrid = $('#scopesGrid').getKendoGrid();
+            scopeWindow = $('#scopeWindow').getKendoWindow();
+            scopeForm = document.getElementById('scopeForm');
+            scopeFormUid = $('#ApiScopeUid');
+            scopeFormValidator = $(scopeForm).validate({
+                submitHandler: scopeFormSubmit
+            });
+            $('#scopeWindow button.k-grid-cancel').click(scopeFormClose);
+
+            secretsGrid = $('#secretsGrid').getKendoGrid();
+            secretWindow = $('#secretWindow').getKendoWindow();
+            secretForm = document.getElementById('secretForm');
+            secretFormUid = $('#ApiSecretUid');
+            secretFormValidator = $(secretForm).validate({
+                submitHandler: secretFormSubmit
+            });
+            $('#secretWindow button.k-grid-cancel').click(secretFormClose);
+        });
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

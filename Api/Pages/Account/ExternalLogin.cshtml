@@ -1,0 +1,58 @@
+﻿@page
+@model ExternalLoginModel
+@{
+    ViewData["Title"] = "Register";
+    var routeData = new Dictionary<string, string>
+    {
+        {nameof(Model.ReturnUrl), Model.ReturnUrl},
+        {nameof(Model.Origin), Model.Origin}
+    };
+}
+
+<div class="row">
+    <div class="col">
+        <hr />
+        <h2>
+            <i class="fal fa-user-plus"></i> @ViewData["Title"]
+        </h2>
+        <h4>Associate your @Model.LoginProvider account.</h4>
+        <hr />
+        <p class="text-info">
+            You've successfully authenticated with <strong>@Model.LoginProvider</strong>.
+            Please enter an email address for this site below and click the Register button to finish
+            logging in.
+        </p>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <form asp-page-handler="Confirmation" asp-all-route-data="@routeData" method="post">
+            <div class="form-group">
+                <label asp-for="Input.FirstName"></label>
+                <input asp-for="Input.FirstName" class="form-control" />
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.LastName"></label>
+                <input asp-for="Input.LastName" class="form-control" />
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Input.Email"></label>
+                <input asp-for="Input.Email" class="form-control" />
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">
+                    Register
+                </button>
+            </div>
+        </form>
+        <div asp-validation-summary="All" class="text-danger"></div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="Shared/_ValidationScriptsPartial" />
+}

@@ -1,0 +1,368 @@
+﻿@page "{id:int}"
+@using IdentityServer4.Models
+@using Kendo.Mvc.UI
+@model IndexModel
+
+@{
+    ViewData["Title"] = $"\"{Model.Client.ClientName}\" Details";
+}
+
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("Client.Enabled")
+                  .Enable(false)
+                  .Label("Enabled")
+                  .Checked(Model.Client.Enabled))
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("Client.RequireClientSecret")
+                  .Enable(false)
+                  .Label("Require Client Secret")
+                  .Checked(Model.Client.RequireClientSecret))
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("Client.RequireConsent")
+                  .Enable(false)
+                  .Label("Require Consent")
+                  .Checked(Model.Client.RequireConsent))
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("Client.AllowRememberConsent")
+                  .Enable(false)
+                  .Label("Allow Remember Consent")
+                  .Checked(Model.Client.AllowRememberConsent))
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("Client.AlwaysIncludeUserClaimsInIdToken")
+                  .Enable(false)
+                  .Label("Always Include User Claims in Id Token")
+                  .Checked(Model.Client.AlwaysIncludeUserClaimsInIdToken))
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("Client.RequirePkce")
+                  .Enable(false)
+                  .Label("Require Proof Key for Code Exchange")
+                  .Checked(Model.Client.RequirePkce))
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("Client.AllowPlainTextPkce")
+                  .Enable(false)
+                  .Label("Allow Plaint-text Proof Key for Code Exchange")
+                  .Checked(Model.Client.AllowPlainTextPkce))
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("Client.AllowAccessTokensViaBrowser")
+                  .Enable(false)
+                  .Label("Allow Access Tokens via Browser")
+                  .Checked(Model.Client.AllowAccessTokensViaBrowser))
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("Client.FrontChannelLogoutSessionRequired")
+                  .Enable(false)
+                  .Label("Front Channel Logout Session Required")
+                  .Checked(Model.Client.FrontChannelLogoutSessionRequired))
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("Client.BackChannelLogoutSessionRequired")
+                  .Enable(false)
+                  .Label("Back Channel Logout Session Required")
+                  .Checked(Model.Client.BackChannelLogoutSessionRequired))
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("Client.AllowOfflineAccess")
+                  .Enable(false)
+                  .Label("Allow Offline Access")
+                  .Checked(Model.Client.AllowOfflineAccess))
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("Client.UpdateAccessTokenClaimsOnRefresh")
+                  .Enable(false)
+                  .Label("Update Access Token Claims on Refresh")
+                  .Checked(Model.Client.UpdateAccessTokenClaimsOnRefresh))
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("Client.EnableLocalLogin")
+                  .Enable(false)
+                  .Label("Enable Local Login")
+                  .Checked(Model.Client.EnableLocalLogin))
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("Client.IncludeJwtId")
+                  .Enable(false)
+                  .Label("Include Jwt Id")
+                  .Checked(Model.Client.IncludeJwtId))
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("Client.AlwaysSendClientClaims")
+                  .Enable(false)
+                  .Label("Always Send Client Claims")
+                  .Checked(Model.Client.AlwaysSendClientClaims))
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="font-weight-bold">
+            @(Html.Kendo().CheckBox()
+                  .Name("Client.NonEditable")
+                  .Enable(false)
+                  .Label("Non-editable")
+                  .Checked(Model.Client.NonEditable))
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-12 col-md-6">
+        <dl>
+            <dt>
+                @Html.LabelFor(model => model.Client.ClientId, "Id")
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Client.ClientId)
+            </dd>
+            <dt>
+                @Html.LabelFor(model => model.Client.ClientName, "Name")
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Client.ClientName)
+            </dd>
+            @{
+                if (!string.IsNullOrEmpty(Model.Client.ClientUri))
+                {
+                    <dt>
+                        @Html.LabelFor(model => model.Client.ClientUri, "URI")
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Client.ClientUri)
+                    </dd>
+                }
+                if (!string.IsNullOrEmpty(Model.Client.LogoUri))
+                {
+                    <dt>
+                        @Html.LabelFor(model => model.Client.LogoUri, "Logo URI")
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Client.LogoUri)
+                    </dd>
+                }
+                if (!string.IsNullOrEmpty(Model.Client.FrontChannelLogoutUri))
+                {
+                    <dt>
+                        @Html.LabelFor(model => model.Client.FrontChannelLogoutUri, "Front Channel Logout URI")
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Client.FrontChannelLogoutUri)
+                    </dd>
+                }
+                if (!string.IsNullOrEmpty(Model.Client.BackChannelLogoutUri))
+                {
+                    <dt>
+                        @Html.LabelFor(model => model.Client.BackChannelLogoutUri, "Back Channel Logout URI")
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Client.BackChannelLogoutUri)
+                    </dd>
+                }
+            }
+            <dt>
+                @Html.LabelFor(model => model.Client.RefreshTokenUsage, "Refresh Token Usage")
+            </dt>
+            <dd>
+                @($"{(TokenUsage)Enum.Parse(typeof(TokenUsage), Model.Client.RefreshTokenUsage.ToString())}")
+            </dd>
+            <dt>
+                @Html.LabelFor(model => model.Client.RefreshTokenExpiration, "Refresh Token Expiration")
+            </dt>
+            <dd>
+                @($"{(TokenExpiration)Enum.Parse(typeof(TokenExpiration), Model.Client.RefreshTokenExpiration.ToString())}")
+            </dd>
+            <dt>
+                @Html.LabelFor(model => model.Client.AccessTokenType, "Access Token Type")
+            </dt>
+            <dd>
+                @($"{(AccessTokenType)Enum.Parse(typeof(AccessTokenType), Model.Client.AccessTokenType.ToString())}")
+            </dd>
+            @{
+                if (!string.IsNullOrEmpty(Model.Client.ClientClaimsPrefix))
+                {
+                    <dt>
+                        @Html.LabelFor(model => model.Client.ClientClaimsPrefix, "Claims Prefix")
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Client.ClientClaimsPrefix)
+                    </dd>
+                }
+                if (!string.IsNullOrEmpty(Model.Client.PairWiseSubjectSalt))
+                {
+                    <dt>
+                        @Html.LabelFor(model => model.Client.PairWiseSubjectSalt, "Pair-ise Subject Salt")
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Client.PairWiseSubjectSalt)
+                    </dd>
+                }
+                if (!string.IsNullOrEmpty(Model.Client.UserCodeType))
+                {
+                    <dt>
+                        @Html.LabelFor(model => model.Client.UserCodeType, "User Code Type")
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Client.UserCodeType)
+                    </dd>
+                }
+            }
+        </dl>
+    </div>
+    <div class="col-12 col-md-6">
+        <dl>
+            @{
+                if (!string.IsNullOrEmpty(Model.Client.ProtocolType))
+                {
+                    <dt>
+                        @Html.LabelFor(model => model.Client.ProtocolType, "Protocol Type")
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Client.ProtocolType)
+                    </dd>
+                }
+                if (!string.IsNullOrEmpty(Model.Client.Description))
+                {
+                    <dt>
+                        @Html.LabelFor(model => model.Client.Description, "Description")
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Client.Description)
+                    </dd>
+                }
+            }
+            <dt>
+                @Html.LabelFor(model => model.Client.IdentityTokenLifetime, "Identity Token Lifetime")
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Client.IdentityTokenLifetime)
+            </dd>
+            <dt>
+                @Html.LabelFor(model => model.Client.AccessTokenLifetime, "Access Token Lifetime")
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Client.AccessTokenLifetime)
+            </dd>
+            <dt>
+                @Html.LabelFor(model => model.Client.AuthorizationCodeLifetime, "Authorization Code Lifetime")
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Client.AuthorizationCodeLifetime)
+            </dd>
+            @{
+                if (Model.Client.ConsentLifetime.HasValue)
+                {
+                    <dt>
+                        @Html.LabelFor(model => model.Client.ConsentLifetime, "Consent Lifetime")
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Client.ConsentLifetime)
+                    </dd>
+                }
+            }
+            <dt>
+                @Html.LabelFor(model => model.Client.AbsoluteRefreshTokenLifetime, "Absolute Refresh Token Lifetime")
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Client.AbsoluteRefreshTokenLifetime)
+            </dd>
+            <dt>
+                @Html.LabelFor(model => model.Client.SlidingRefreshTokenLifetime, "Sliding Refresh Token Lifetime")
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Client.SlidingRefreshTokenLifetime)
+            </dd>
+            @{
+                if (Model.Client.UserSsoLifetime.HasValue)
+                {
+                    <dt>
+                        @Html.LabelFor(model => model.Client.UserSsoLifetime, "User SSO Lifetime")
+                    </dt>
+                    <dd>
+                        @Html.DisplayFor(model => model.Client.UserSsoLifetime)
+                    </dd>
+                }
+            }
+            <dt>
+                @Html.LabelFor(model => model.Client.DeviceCodeLifetime, "Device Code Lifetime")
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.Client.DeviceCodeLifetime)
+            </dd>
+        </dl>
+    </div>
+</div>
+<hr />
+<h4>
+    <a asp-page="../Index" title="Clients">
+        <i class="fal fa-list"></i> List |
+    </a>
+    <a asp-page="../Edit/Index" asp-route-id="@Model.Client.Id" title="Edit Client Details">
+        <i class="fal fa-edit"></i> Edit
+    </a> |
+    <a asp-page="../Delete" asp-route-id="@Model.Client.Id" title="Delete Client">
+        <i class="fal fa-trash"></i> Delete
+    </a>
+</h4>
+<hr />

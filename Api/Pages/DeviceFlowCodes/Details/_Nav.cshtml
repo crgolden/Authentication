@@ -1,0 +1,15 @@
+﻿@{
+    var userCode = $"{ViewContext.RouteData.Values["userCode"]}";
+    var activePage = System.IO.Path.GetFileNameWithoutExtension(ViewContext.ActionDescriptor.DisplayName);
+}
+
+<ul class="nav nav-pills flex-column">
+    <li class="nav-item">
+        <a class="nav-link @(string.Equals(activePage, "Index", StringComparison.OrdinalIgnoreCase) ? "active" : null)"
+           title="Device Flow Code Details"
+           asp-page="./Index"
+           asp-route-id="@userCode">
+            Details
+        </a>
+    </li>
+</ul>

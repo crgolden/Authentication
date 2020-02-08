@@ -1,0 +1,47 @@
+﻿@page "{id:guid}"
+@using Kendo.Mvc.UI
+@model ClaimsModel
+
+@{
+    ViewData["Title"] = $"\"{Model.Role.Name}\" Claims";
+}
+
+@(Html.Kendo().Grid(Model.Claims)
+      .Name("claimsGrid")
+      .ToolBar(toolbar => toolbar.ClientTemplateId("claimsToolbarTemplate"))
+      .Columns(columns =>
+      {
+          columns.Bound(roleClaim => roleClaim.ClaimType);
+          columns.Bound(roleClaim => roleClaim.ClaimValue);
+      })
+      .Sortable(sort => sort.AllowUnsort(false))
+      .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+      .Pageable(pageable => pageable.ButtonCount(5))
+      .DataSource(dataSource => dataSource
+          .Ajax()
+          .Sort(sort => sort.Add(nameof(Core.Entities.RoleClaim.ClaimType)).Ascending())
+          .PageSize(5)
+          .ServerOperation(false)))
+<hr />
+<h4>
+    <a asp-page="../Index" title="Roles">
+        <i class="fal fa-list"></i> List |
+    </a>
+    <a asp-page="../Edit/Claims" asp-route-id="@Model.Role.Id" title="Edit Role Claims">
+        <i class="fal fa-edit"></i> Edit
+    </a> |
+    <a asp-page="../Delete" asp-route-id="@Model.Role.Id" title="Delete Role">
+        <i class="fal fa-trash"></i> Delete
+    </a>
+</h4>
+<hr />
+
+@section Scripts {
+    <script id="claimsToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-id-card"></i> Claims
+        </h4>
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

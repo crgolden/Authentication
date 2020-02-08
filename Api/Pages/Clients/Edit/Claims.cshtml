@@ -1,0 +1,97 @@
+﻿@page "{id:int}"
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model ClaimsModel
+
+@{
+    ViewData["Title"] = $"Edit \"{Model.Client.ClientName}\" Claims";
+}
+
+<form method="post">
+    <input type="hidden" asp-for="Client.Id" />
+    @{
+        var clientClaims = Model.Claims.ToArray();
+        for (var i = 0; i < clientClaims.Length; i++)
+        {
+            <input type="hidden" name="Client.Claims[@i].Type" value="@clientClaims[i].Id" />
+            <input type="hidden" name="Client.Claims[@i].Type" value="@clientClaims[i].Type" />
+            <input type="hidden" name="Client.Claims[@i].Value" value="@clientClaims[i].Value" />
+        }
+    }
+    @(Html.Kendo().Grid(Model.Claims)
+          .Name("claimsGrid")
+          .ToolBar(toolbar => toolbar.ClientTemplateId("claimsToolbarTemplate"))
+          .Editable(editable => editable
+              .Mode(GridEditMode.InCell)
+              .DisplayDeleteConfirmation(false))
+          .Columns(columns =>
+          {
+              columns.Bound(c => c.Type);
+              columns.Bound(c => c.Value);
+              columns.Command(command => command.Destroy());
+          })
+          .Sortable(sort => sort.AllowUnsort(false))
+          .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+          .Pageable(pageable => pageable.ButtonCount(5))
+          .DataSource(dataSource => dataSource
+              .Ajax()
+              .Model(model => model.Id(p => p.Id))
+              .Events(events => events.Change("claimsChange"))
+              .Sort(sort => sort.Add(nameof(ClientClaim.Type)).Ascending())
+              .PageSize(5)
+              .Batch(true)
+              .ServerOperation(false)))
+    <hr />
+    <div class="form-group">
+        <h4>
+            <button type="submit" class="btn btn-primary" title="Save Client Claims">
+                Save
+            </button> |
+            <a asp-page="../Details/Claims" asp-route-id="@Model.Client.Id" title="Client Claims">
+                <i class="fal fa-info-square"></i> Details
+            </a> |
+            <a asp-page="../Index" title="Clients">
+                <i class="fal fa-list"></i> List
+            </a>
+        </h4>
+        <hr />
+    </div>
+</form>
+
+@section Scripts {
+    <script id="claimsToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-id-card"></i> Claims
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add Claim
+            </button>
+        </h4>
+    </script>
+
+    <script type="text/javascript">
+        function claimsChange(event) {
+            $('input[name^="Client.Claims"]').remove();
+            $('form').append(event.sender.data().filter(claim => {
+                return claim.Type.length > 0 && claim.Value.length > 0;
+            }).reduce((inputs, claim, index) => {
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Client.Claims[${index}].Id`,
+                    value: claim.Id
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Client.Claims[${index}].Type`,
+                    value: claim.Type
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Client.Claims[${index}].Value`,
+                    value: claim.Value
+                }));
+                return inputs;
+            }, []));
+        }
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

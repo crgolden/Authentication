@@ -1,0 +1,60 @@
+﻿@page "{userCode}"
+@model DeleteModel
+
+@{
+    ViewData["Title"] = "Delete Device Flow Code";
+}
+
+<div class="row">
+    <div class="col">
+        <hr />
+        <h2>
+            <i class="fal fa-passport"></i> @ViewData["Title"]
+        </h2>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <dl>
+            <dt>
+                @Html.LabelFor(model => model.DeviceFlowCode.UserCode, "User Code")
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.DeviceFlowCode.UserCode)
+            </dd>
+            <dt>
+                @Html.LabelFor(model => model.DeviceFlowCode.DeviceCode, "Device Code")
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.DeviceFlowCode.DeviceCode)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.DeviceFlowCode.Data)
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.DeviceFlowCode.Data)
+            </dd>
+        </dl>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <form method="post">
+            <input type="hidden" asp-for="DeviceFlowCode.UserCode" />
+            <h4>
+                <button type="submit" class="btn btn-danger" title="Delete Device Flow Code">
+                    Delete
+                </button> |
+                <a asp-page="./Details/Index" asp-route-id="@Model.DeviceFlowCode.UserCode" title="Device Flow Code Details">
+                    <i class="fal fa-info-square"></i> Details
+                </a> |
+                <a asp-page="./Index" title="Device Flow Codes">
+                    <i class="fal fa-list"></i> List
+                </a>
+            </h4>
+        </form>
+        <hr />
+    </div>
+</div>

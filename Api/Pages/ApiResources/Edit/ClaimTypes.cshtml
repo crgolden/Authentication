@@ -1,0 +1,90 @@
+﻿@page "{id:int}"
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model ClaimTypesModel
+
+@{
+    ViewData["Title"] = $"Edit \"{Model.ApiResource.Name}\" Claim Types";
+}
+
+<form method="post">
+    <input type="hidden" asp-for="ApiResource.Id" />
+    @{
+        var apiResourceClaimTypes = Model.ClaimTypes.ToArray();
+        for (var i = 0; i < apiResourceClaimTypes.Length; i++)
+        {
+            <input type="hidden" name="ApiResource.UserClaims[@i].Id" value="@apiResourceClaimTypes[i].Id" />
+            <input type="hidden" name="ApiResource.UserClaims[@i].Type" value="@apiResourceClaimTypes[i].Type" />
+        }
+    }
+    @(Html.Kendo().Grid(Model.ClaimTypes)
+          .Name("claimTypesGrid")
+          .ToolBar(toolbar => toolbar.ClientTemplateId("claimTypesToolbarTemplate"))
+          .Editable(editable => editable
+              .Mode(GridEditMode.InCell)
+              .DisplayDeleteConfirmation(false))
+          .Columns(columns =>
+          {
+              columns.Bound(apiResourceClaimType => apiResourceClaimType.Type);
+              columns.Command(command => command.Destroy()).Width(200);
+          })
+          .Sortable(sort => sort.AllowUnsort(false))
+          .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+          .Pageable(pageable => pageable.ButtonCount(5))
+          .DataSource(dataSource => dataSource
+              .Ajax()
+              .Model(model => model.Id(apiResourceClaimType => apiResourceClaimType.Id))
+              .Events(events => events.Change("claimTypesChange"))
+              .Sort(sort => sort.Add(nameof(ApiResourceClaim.Type)).Ascending())
+              .PageSize(5)
+              .Batch(true)
+              .ServerOperation(false)))
+    <hr />
+    <div class="form-group">
+        <h4>
+            <button type="submit" class="btn btn-primary" title="Save API Resource Claim Types">
+                Save
+            </button> |
+            <a asp-page="../Details/ClaimTypes" asp-route-id="@Model.ApiResource.Id" title="API Resource Claim Types">
+                <i class="fal fa-info-square"></i> Details
+            </a> |
+            <a asp-page="../Index" title="API Resources">
+                <i class="fal fa-list"></i> List
+            </a>
+        </h4>
+        <hr />
+    </div>
+</form>
+
+@section Scripts {
+    <script id="claimTypesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-id-card"></i> Claim Types
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script type="text/javascript">
+        function claimTypesChange(event) {
+            $('input[name^="ApiResource.UserClaims"]').remove();
+            $('form').append(event.sender.data().filter(claim => {
+                return claim.Type.length > 0;
+            }).reduce((inputs, claim, index) => {
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.UserClaims[${index}].Id`,
+                    value: claim.Id
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.UserClaims[${index}].Type`,
+                    value: claim.Type
+                }));
+                return inputs;
+            }, []));
+        }
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,97 @@
+﻿@page "{id:int}"
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model PropertiesModel
+
+@{
+    ViewData["Title"] = $"Edit \"{Model.Client.ClientName}\" Properties";
+}
+
+<form method="post">
+    <input type="hidden" asp-for="Client.Id" />
+    @{
+        var clientProperties = Model.Properties.ToArray();
+        for (var i = 0; i < clientProperties.Length; i++)
+        {
+            <input type="hidden" name="Client.Properties[@i].Id" value="@clientProperties[i].Id" />
+            <input type="hidden" name="Client.Properties[@i].Key" value="@clientProperties[i].Key" />
+            <input type="hidden" name="Client.Properties[@i].Value" value="@clientProperties[i].Value" />
+        }
+    }
+    @(Html.Kendo().Grid(Model.Properties)
+          .Name("propertiesGrid")
+          .ToolBar(toolbar => toolbar.ClientTemplateId("propertiesToolbarTemplate"))
+          .Editable(editable => editable
+              .Mode(GridEditMode.InCell)
+              .DisplayDeleteConfirmation(false))
+          .Columns(columns =>
+          {
+              columns.Bound(clientProperty => clientProperty.Key);
+              columns.Bound(clientProperty => clientProperty.Value);
+              columns.Command(command => command.Destroy()).Width(200);
+          })
+          .Sortable(sort => sort.AllowUnsort(false))
+          .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+          .Pageable(pageable => pageable.ButtonCount(5))
+          .DataSource(dataSource => dataSource
+              .Ajax()
+              .Model(model => model.Id(clientProperty => clientProperty.Id))
+              .Events(events => events.Change("propertiesChange"))
+              .Sort(sort => sort.Add(nameof(ClientProperty.Key)).Ascending())
+              .PageSize(5)
+              .Batch(true)
+              .ServerOperation(false)))
+    <hr />
+    <div class="form-group">
+        <h4>
+            <button type="submit" class="btn btn-primary" title="Save Client Properties">
+                Save
+            </button> |
+            <a asp-page="../Details/Properties" asp-route-id="@Model.Client.Id" title="Client Properties">
+                <i class="fal fa-info-square"></i> Details
+            </a> |
+            <a asp-page="../Index" title="Clients">
+                <i class="fal fa-list"></i> List
+            </a>
+        </h4>
+        <hr />
+    </div>
+</form>
+
+@section Scripts {
+    <script id="propertiesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-cog"></i> Properties
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script type="text/javascript">
+        function propertiesChange(event) {
+            $('input[name^="Client.Properties"]').remove();
+            $('form').append(event.sender.data().filter(property => {
+                return property.Key.length > 0 && property.Value.length > 0;
+            }).reduce((inputs, property, index) => {
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Client.Properties[${index}].Id`,
+                    value: property.Id
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Client.Properties[${index}].Key`,
+                    value: property.Key
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Client.Properties[${index}].Value`,
+                    value: property.Value
+                }));
+                return inputs;
+            }, []));
+        }
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,90 @@
+﻿@page "{id:int}"
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model CorsOriginsModel
+
+@{
+    ViewData["Title"] = $"Edit \"{Model.Client.ClientName}\" CORS Origins";
+}
+
+<form method="post">
+    <input type="hidden" asp-for="Client.Id" />
+    @{
+        var clientCorsOrigins = Model.CorsOrigins.ToArray();
+        for (var i = 0; i < clientCorsOrigins.Length; i++)
+        {
+            <input type="hidden" name="Client.AllowedCorsOrigins[@i].Id" value="@clientCorsOrigins[i].Id" />
+            <input type="hidden" name="Client.AllowedCorsOrigins[@i].Origin" value="@clientCorsOrigins[i].Origin" />
+        }
+    }
+    @(Html.Kendo().Grid(Model.CorsOrigins)
+          .Name("corsOriginsGrid")
+          .ToolBar(toolbar => toolbar.ClientTemplateId("corsOriginsToolbarTemplate"))
+          .Editable(editable => editable
+              .Mode(GridEditMode.InCell)
+              .DisplayDeleteConfirmation(false))
+          .Columns(columns =>
+          {
+              columns.Bound(clientCorsOrigin => clientCorsOrigin.Origin);
+              columns.Command(command => command.Destroy()).Width(200);
+          })
+          .Sortable(sort => sort.AllowUnsort(false))
+          .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+          .Pageable(pageable => pageable.ButtonCount(5))
+          .DataSource(dataSource => dataSource
+              .Ajax()
+              .Model(model => model.Id(clientCorsOrigin => clientCorsOrigin.Id))
+              .Events(events => events.Change("corsOriginsChange"))
+              .Sort(sort => sort.Add(nameof(ClientCorsOrigin.Origin)).Ascending())
+              .PageSize(5)
+              .Batch(true)
+              .ServerOperation(false)))
+    <hr />
+    <div class="form-group">
+        <h4>
+            <button type="submit" class="btn btn-primary" title="Save Client CORS Origins">
+                Save
+            </button> |
+            <a asp-page="../Details/CorsOrigins" asp-route-id="@Model.Client.Id" title="Client CORS Origins">
+                <i class="fal fa-info-square"></i> Details
+            </a> |
+            <a asp-page="../Index" title="Clients">
+                <i class="fal fa-list"></i> List
+            </a>
+        </h4>
+        <hr />
+    </div>
+</form>
+
+@section Scripts {
+    <script id="corsOriginsToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-map-pin"></i> CORS Origins
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script type="text/javascript">
+        function corsOriginsChange(event) {
+            $('input[name^="Client.AllowedCorsOrigins"]').remove();
+            $('form').append(event.sender.data().filter(corsOrigin => {
+                return corsOrigin.Origin.length > 0;
+            }).reduce((inputs, corsOrigin, index) => {
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Client.AllowedCorsOrigins[${index}].Id`,
+                    value: corsOrigin.Id
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `Client.AllowedCorsOrigins[${index}].Origin`,
+                    value: corsOrigin.Origin
+                }));
+                return inputs;
+            }, []));
+        }
+    </script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

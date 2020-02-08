@@ -1,0 +1,281 @@
+﻿@page "{id:int}"
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model ScopesModel
+
+@{
+    ViewData["Title"] = $"Edit \"{Model.ApiResource.Name}\" Scopes";
+}
+
+<form method="post" id="apiResource">
+    <input type="hidden" asp-for="ApiResource.Id" />
+    @{
+        var apiResourceScopes = Model.Scopes.ToArray();
+        for (var i = 0; i < apiResourceScopes.Length; i++)
+        {
+            <input type="hidden" name="ApiResource.Scopes[@i].Id" value="@apiResourceScopes[i].Id" />
+            <input type="hidden" name="ApiResource.Scopes[@i].Name" value="@apiResourceScopes[i].Name" />
+            <input type="hidden" name="ApiResource.Scopes[@i].DisplayName" value="@apiResourceScopes[i].DisplayName" />
+            <input type="hidden" name="ApiResource.Scopes[@i].Description" value="@apiResourceScopes[i].Description" />
+            <input type="hidden" name="ApiResource.Scopes[@i].Emphasize" value="@apiResourceScopes[i].Emphasize" />
+            <input type="hidden" name="ApiResource.Scopes[@i].Required" value="@apiResourceScopes[i].Required" />
+            <input type="hidden" name="ApiResource.Scopes[@i].ShowInDiscoveryDocument" value="@apiResourceScopes[i].ShowInDiscoveryDocument" />
+        }
+    }
+    @(Html.Kendo().Grid(Model.Scopes)
+          .Name("scopesGrid")
+          .ToolBar(toolbar => toolbar.ClientTemplateId("scopesToolbarTemplate"))
+          .Editable(editable => editable
+              .Mode(GridEditMode.InCell)
+              .DisplayDeleteConfirmation(false))
+          .Columns(columns =>
+          {
+              columns.Bound(apiResourceScope => apiResourceScope.Name);
+              columns.Bound(apiResourceScope => apiResourceScope.DisplayName);
+              columns.Command(command =>
+              {
+                  command.Custom("Edit").IconClass("k-icon k-i-edit").Click("scopeEdit");
+                  command.Destroy();
+              }).Width(200);
+          })
+          .Sortable(sort => sort.AllowUnsort(false))
+          .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+          .Pageable(pageable => pageable.ButtonCount(5))
+          .DataSource(dataSource => dataSource
+              .Ajax()
+              .Model(model => model.Field(apiResourceScope => apiResourceScope.Name).Editable(false))
+              .Sort(sort => sort.Add(nameof(ApiScope.Name)).Ascending())
+              .Events(events => events.Change("scopesChange"))
+              .PageSize(5)
+              .Batch(true)
+              .ServerOperation(false)))
+    <hr/>
+    <h4>
+        <button type="submit" title="Save API Resource Scopes" class="btn btn-primary">
+            Save
+        </button> |
+        <a asp-page="../Details/Scopes" asp-route-id="@Model.ApiResource.Id" title="API Resource Scopes">
+            <i class="fal fa-info-square"></i> Details
+        </a> |
+        <a asp-page="../Index" title="API Resources">
+            <i class="fal fa-list"></i> List
+        </a>
+    </h4>
+    <hr/>
+</form>
+
+@(Html.Kendo().Window()
+      .Name("scopeWindow")
+      .Title("Scope")
+      .Visible(false)
+      .Modal(true)
+      .Draggable(true)
+      .Events(events => events.Close("scopeWindowClose"))
+      .Content(@<text>
+                   <form id="scopeForm">
+                       <input id="ApiScopeUid" class="d-none"/>
+                       <div class="row">
+                           <div class="col">
+                               <input id="ApiScopeRequired" type="checkbox" class="k-checkbox"/>
+                               <label for="ApiScopeRequired" class="k-checkbox-label">
+                                   Required
+                               </label>
+                           </div>
+                           <div class="col">
+                               <input id="ApiScopeEmphasize" type="checkbox" class="k-checkbox"/>
+                               <label for="ApiScopeEmphasize" class="k-checkbox-label">
+                                   Emphasize
+                               </label>
+                           </div>
+                       </div>
+                       <div class="row">
+                           <div class="col">
+                               <input id="ApiScopeShowInDiscoveryDocument" type="checkbox" class="k-checkbox"/>
+                               <label for="ApiScopeShowInDiscoveryDocument" class="k-checkbox-label">
+                                   Show in discovery document
+                               </label>
+                           </div>
+                       </div>
+                       <hr/>
+                       <div class="form-group">
+                           <label for="ApiScopeName">Name</label>
+                           <input class="form-control" id="ApiScopeName" name="ApiScopeName" type="text" required>
+                       </div>
+                       <div class="form-group">
+                           <label for="ApiScopeDisplayName">Display Name</label>
+                           <input class="form-control" id="ApiScopeDisplayName" name="ApiScopeDisplayName" type="text">
+                       </div>
+                       <div class="form-group">
+                           <label for="ApiScopeDescription">Description</label>
+                           <textarea class="form-control" id="ApiScopeDescription" name="ApiScopeDescription"></textarea>
+                       </div>
+                       <hr/>
+                       <button type="submit" class="k-button k-button-icontext k-primary k-grid-update">
+                           <span class="k-icon k-i-check"></span>Save
+                       </button>
+                       <button type="reset" class="k-button k-button-icontext k-grid-cancel">
+                           <span class="k-icon k-i-cancel"></span>Cancel
+                       </button>
+                   </form>
+                </text>))
+
+@section Scripts {
+<script id="scopesToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-globe"></i> Scopes
+            <button class="k-button k-button-icontext k-grid-add float-right">
+                <span class="k-icon k-i-plus"></span>Add
+            </button>
+        </h4>
+    </script>
+
+    <script type="text/javascript">
+        let scopeAction;
+        let scopeWindow;
+        let scopeForm;
+        let scopeFormUid;
+        let scopeFormValidator;
+        let scopesGrid;
+
+        const scopesChange = function (event) {
+            switch (event.action) {
+                case 'add':
+                    {
+                        const dataItem = event.sender.at(event.index);
+                        scopeFormUid.val(dataItem.uid);
+                        scopeWindow.open().center();
+                        scopeAction = 'create';
+                    }
+                case 'remove':
+                    {
+                        scopeInputsRefresh();
+                    }
+            }
+        };
+
+        const scopeEdit = function (event) {
+            event.preventDefault();
+            scopeFormReset();
+            scopeFormUpdate();
+            scopeWindow.open().center();
+        };
+
+        const scopeWindowClose = function (event) {
+            if (event.userTriggered) {
+                removeGridScope();
+            }
+            scopeFormReset();
+        };
+
+        const scopeInputsRefresh = function () {
+            $('input[name^="ApiResource.Scopes"]').remove();
+            $('#apiResource').append(scopesGrid.dataSource.data().reduce((inputs, scope, index) => {
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Scopes[${index}].Id`,
+                    value: scope.Id
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Scopes[${index}].Name`,
+                    value: scope.Name
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Scopes[${index}].DisplayName`,
+                    value: scope.DisplayName
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Scopes[${index}].Description`,
+                    value: scope.Description
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Scopes[${index}].Emphasize`,
+                    value: scope.Emphasize
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Scopes[${index}].Required`,
+                    value: scope.Required
+                }));
+                inputs.push($('<input>', {
+                    type: 'hidden',
+                    name: `ApiResource.Scopes[${index}].ShowInDiscoveryDocument`,
+                    value: scope.ShowInDiscoveryDocument
+                }));
+                return inputs;
+            }, []));
+        };
+
+        const scopeFormReset = function () {
+            scopeFormValidator.resetForm();
+            scopeForm.reset();
+            scopeAction = undefined;
+        };
+
+        const scopeFormSubmit = function () {
+            updateGridScope();
+            scopeInputsRefresh();
+            scopeFormReset();
+            scopeWindow.close();
+        };
+
+        const scopeFormUpdate = function () {
+            const row = $(event.toElement).closest('tr');
+            const dataItem = scopesGrid.dataItem(row);
+            scopeFormUid.val(dataItem.uid);
+            $('#ApiScopeDescription').val(dataItem.Description);
+            $('#ApiScopeDisplayName').val(dataItem.DisplayName);
+            $('#ApiScopeEmphasize').prop('checked', dataItem.Emphasize);
+            $('#ApiScopeName').val(dataItem.Name);
+            $('#ApiScopeRequired').prop('checked', dataItem.Required);
+            $('#ApiScopeShowInDiscoveryDocument').prop('checked', dataItem.ShowInDiscoveryDocument);
+        };
+
+        const scopeFormClose = function () {
+            removeGridScope();
+            scopeFormReset();
+            scopeWindow.close();
+        };
+
+        const removeGridScope = function () {
+            if (scopeAction !== 'create') {
+                return;
+            }
+            const uid = scopeFormUid.val();
+            const dataItem = scopesGrid.dataSource.getByUid(uid);
+            scopesGrid.dataSource.remove(dataItem);
+        };
+
+        const updateGridScope = function () {
+            const uid = scopeFormUid.val();
+            const dataItem = scopesGrid.dataSource.getByUid(uid);
+            dataItem.Description = $('#ApiScopeDescription').val();
+            dataItem.DisplayName = $('#ApiScopeDisplayName').val();
+            dataItem.Emphasize = $('#ApiScopeEmphasize').prop('checked');
+            dataItem.Name = $('#ApiScopeName').val();
+            dataItem.Required = $('#ApiScopeRequired').prop('checked');
+            dataItem.ShowInDiscoveryDocument = $('#ApiScopeShowInDiscoveryDocument').prop('checked');
+            scopesGrid.refresh();
+        };
+
+        $(function () {
+            $.validator.setDefaults({
+                errorClass: 'text-danger'
+            });
+
+            scopesGrid = $('#scopesGrid').getKendoGrid();
+            scopeWindow = $('#scopeWindow').getKendoWindow();
+            scopeForm = document.getElementById('scopeForm');
+            scopeFormUid = $('#ApiScopeUid');
+            scopeFormValidator = $(scopeForm).validate({
+                submitHandler: scopeFormSubmit
+            });
+            $('#scopeWindow button.k-grid-cancel').click(scopeFormClose);
+        });
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,78 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="row">
+    <div class="col">
+        <hr />
+        <h2>
+            <i class="fal fa-tachometer"></i> @ViewData["Title"]
+        </h2>
+    </div>
+</div>
+<hr />
+<div class="row text-center">
+    <div class="col-4 d-none d-md-block"></div>
+    <div class="col-6 col-md-2">
+        <a asp-page="./Users/Index" title="Users">
+            <i class="fal fa-user fa-5x"></i><br /><br />Users
+        </a>
+    </div>
+    <div class="col-6 col-md-2">
+        <a asp-page="./Roles/Index" title="Roles">
+            <i class="fal fa-id-badge fa-5x"></i><br /><br />Roles
+        </a>
+    </div>
+    <div class="col-4 d-none d-md-block"></div>
+</div>
+<hr />
+<div class="row text-center">
+    <div class="col-1 d-none d-md-block"></div>
+    <div class="col-6 col-md-2 mb-3 mb-md-0">
+        <a asp-page="./IdentityResources/Index" title="Identity Resources">
+            <i class="fal fa-book-user fa-5x"></i><br /><br />Identity Resources
+        </a>
+    </div>
+    <div class="col-6 col-md-2 mb-3 mb-md-0">
+        <a asp-page="./ApiResources/Index" title="API Resources">
+            <i class="fal fa-database fa-5x"></i><br /><br />API Resources
+        </a>
+    </div>
+    <div class="col-6 col-md-2 mb-3 mb-md-0">
+        <a asp-page="./Clients/Index" title="Clients">
+            <i class="fal fa-mobile fa-5x"></i><br /><br />Clients
+        </a>
+    </div>
+    <div class="col-6 col-md-2 mb-3 mb-md-0">
+        <a asp-page="./DeviceFlowCodes/Index" title="Device Flow Codes">
+            <i class="fal fa-passport fa-5x"></i><br /><br />Device Flow Codes
+        </a>
+    </div>
+    <div class="col-12 col-md-2">
+        <a asp-page="./PersistedGrants/Index" title="Persisted Grants">
+            <i class="fal fa-handshake fa-5x"></i><br /><br />Persisted Grants
+        </a>
+    </div>
+    <div class="col-1 d-none d-md-block"></div>
+</div>
+<hr />
+<div class="row text-center">
+    <div class="col-12 col-md-4">
+        <a href="/.well-known/openid-configuration" title="Discovery Document">
+            <img alt="Discovery Document" src="favicon.ico" height="16" width="16"> Discovery Document
+        </a>
+    </div>
+    <div class="col-12 col-md-4">
+        <a href="https://openid.net/connect/" title="OpenId Connect">
+            <img alt="OpenId Connect" src="https://openid.net/favicon.ico" height="16" width="16"> OpenId Connect
+        </a>
+    </div>
+    <div class="col-12 col-md-4">
+        <a href="https://identityserver4.readthedocs.io/" title="IdentityServer4">
+            <img alt="IdentityServer4" src="https://identityserver4.readthedocs.io/en/latest/_static/favicon.ico" height="16" width="16"> IdentityServer4
+        </a>
+    </div>
+</div>
+<hr />

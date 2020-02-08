@@ -1,0 +1,152 @@
+﻿namespace Authentication.Api.Tests.Users.Details
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using Core;
+    using Core.Entities;
+    using IdentityServer4.EntityFramework.Options;
+    using Microsoft.AspNetCore.Identity;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Mvc.RazorPages;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Options;
+    using Moq;
+    using Pages.Users.Details;
+    using Xunit;
+
+    public class ClaimsFacts
+    {
+        private static string DatabaseNamePrefix => typeof(ClaimsFacts).FullName;
+        private readonly Mock<UserManager<User>> _userManager;
+        private readonly Mock<IOptionsSnapshot<ConfigurationStoreOptions>> _configurationStoreOptions;
+        private readonly Mock<IOptionsSnapshot<OperationalStoreOptions>> _operationalStoreOptions;
+
+        public ClaimsFacts()
+        {
+            _userManager = new Mock<UserManager<User>>(
+                Mock.Of<IUserStore<User>>(),
+                Mock.Of<IOptions<IdentityOptions>>(),
+                Mock.Of<IPasswordHasher<User>>(),
+                new List<IUserValidator<User>>(),
+                new List<IPasswordValidator<User>>(),
+                Mock.Of<ILookupNormalizer>(),
+                new IdentityErrorDescriber(),
+                Mock.Of<IServiceProvider>(),
+                Mock.Of<ILogger<UserManager<User>>>());
+            _configurationStoreOptions = new Mock<IOptionsSnapshot<ConfigurationStoreOptions>>();
+            _configurationStoreOptions.Setup(x => x.Value).Returns(new ConfigurationStoreOptions());
+            _operationalStoreOptions = new Mock<IOptionsSnapshot<OperationalStoreOptions>>();
+            _operationalStoreOptions.Setup(x => x.Value).Returns(new OperationalStoreOptions());
+        }
+
+        [Fact]
+        public async Task OnGetAsync()
+        {
+            // Arrange
+            var databaseName = $"{DatabaseNamePrefix}.{nameof(OnGetAsync)}";
+            var options = new DbContextOptionsBuilder<IdentityServerDbContext>()
+                .UseInMemoryDatabase(databaseName)
+                .Options;
+            var user = new User();
+            user.Claims.Add(new UserClaim { ClaimType = "Claim 1 Type" });
+            user.Claims.Add(new UserClaim { ClaimType = "Claim 2 Type" });
+            user.Claims.Add(new UserClaim { ClaimType = "Claim 3 Type" });
+            using (var context = new IdentityServerDbContext(options, _configurationStoreOptions.Object, _operationalStoreOptions.Object))
+            {
+                context.Add(user);
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+
+            ClaimsModel model;
+            IActionResult get;
+
+            // Act
+            using (var context = new IdentityServerDbContext(options, _configurationStoreOptions.Object, _operationalStoreOptions.Object))
+            {
+                _userManager.Setup(x => x.Users).Returns(context.Users);
+                model = new ClaimsModel(_userManager.Object);
+                get = await model.OnGetAsync(user.Id).ConfigureAwait(false);
+            }
+
+            // Assert
+            Assert.NotNull(model.UserModel);
+            Assert.Equal(user.Id, model.UserModel.Id);
+            var claims = Assert.IsAssignableFrom<IEnumerable<UserClaim>>(model.Claims);
+            Assert.Equal(user.Claims.Count, claims.Count());
+            Assert.IsType<PageResult>(get);
+        }
+
+        [Fact]
+        public async Task OnGetAsync_InvalidId()
+        {
+            // Arrange
+            var databaseName = $"{DatabaseNamePrefix}.{nameof(OnGetAsync_InvalidId)}";
+            var options = new DbContextOptionsBuilder<IdentityServerDbContext>()
+                .UseInMemoryDatabase(databaseName)
+                .Options;
+            var user = new User();
+            user.Claims.Add(new UserClaim());
+            user.Claims.Add(new UserClaim());
+            user.Claims.Add(new UserClaim());
+            using (var context = new IdentityServerDbContext(options, _configurationStoreOptions.Object, _operationalStoreOptions.Object))
+            {
+                context.Add(user);
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+
+            ClaimsModel model;
+            IActionResult get;
+
+            // Act
+            using (var context = new IdentityServerDbContext(options, _configurationStoreOptions.Object, _operationalStoreOptions.Object))
+            {
+                _userManager.Setup(x => x.Users).Returns(context.Users);
+                model = new ClaimsModel(_userManager.Object);
+                get = await model.OnGetAsync(Guid.Empty).ConfigureAwait(false);
+            }
+
+            // Assert
+            Assert.Null(model.UserModel);
+            Assert.Null(model.Claims);
+            Assert.IsType<NotFoundResult>(get);
+        }
+
+        [Fact]
+        public async Task OnGetAsync_InvalidModel()
+        {
+            // Arrange
+            var databaseName = $"{DatabaseNamePrefix}.{nameof(OnGetAsync_InvalidModel)}";
+            var options = new DbContextOptionsBuilder<IdentityServerDbContext>()
+                .UseInMemoryDatabase(databaseName)
+                .Options;
+            var user = new User();
+            user.Claims.Add(new UserClaim());
+            user.Claims.Add(new UserClaim());
+            user.Claims.Add(new UserClaim());
+            using (var context = new IdentityServerDbContext(options, _configurationStoreOptions.Object, _operationalStoreOptions.Object))
+            {
+                context.Add(user);
+                await context.SaveChangesAsync().ConfigureAwait(false);
+            }
+
+            ClaimsModel model;
+            IActionResult get;
+
+            // Act
+            using (var context = new IdentityServerDbContext(options, _configurationStoreOptions.Object, _operationalStoreOptions.Object))
+            {
+                _userManager.Setup(x => x.Users).Returns(context.Users);
+                model = new ClaimsModel(_userManager.Object);
+                get = await model.OnGetAsync(Guid.NewGuid()).ConfigureAwait(false);
+            }
+
+            // Assert
+            Assert.Null(model.UserModel);
+            Assert.Null(model.Claims);
+            Assert.IsType<NotFoundResult>(get);
+        }
+    }
+}

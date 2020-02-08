@@ -1,0 +1,39 @@
+﻿@page
+@using Kendo.Mvc.UI
+@model IndexModel
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<div class="row">
+    <div class="col">
+        <hr />
+        <h2>
+            <i class="fal fa-user"></i> @ViewData["Title"]
+        </h2>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        @(Html.Kendo().Grid(Model.Users)
+              .Name("usersGrid")
+              .Columns(columns => columns.Bound(user => user.Email))
+              .Sortable(sort => sort.AllowUnsort(false))
+              .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+              .Pageable(pageable => pageable.ButtonCount(5))
+              .DataSource(dataSource => dataSource
+                  .Ajax()
+                  .Sort(sort => sort.Add(nameof(Core.Entities.User.Email)).Ascending())
+                  .PageSize(5)
+                  .ServerOperation(false))
+              .ClientRowTemplate(
+                  "<tr data-uid='#: uid #'>" +
+                  "<td>" +
+                  "<a href='/users/details/#:data.Id#'>#:data.Email#</a>" +
+                  "</td>" +
+                  "</tr>"))
+        <hr/>
+    </div>
+</div>

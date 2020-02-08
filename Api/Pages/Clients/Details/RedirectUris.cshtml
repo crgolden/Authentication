@@ -1,0 +1,47 @@
+﻿@page "{id:int}"
+@using IdentityServer4.EntityFramework.Entities
+@using Kendo.Mvc.UI
+@model RedirectUrisModel
+
+@{
+    ViewData["Title"] = $"\"{Model.Client.ClientName}\" Redirect URIs";
+}
+
+@(Html.Kendo().Grid(Model.RedirectUris)
+      .Name("redirectUrisGrid")
+      .ToolBar(toolbar => toolbar.ClientTemplateId("redirectUrisToolbarTemplate"))
+      .Columns(columns =>
+      {
+          columns.Bound(clientRedirectUri => clientRedirectUri.RedirectUri);
+      })
+      .Sortable(sort => sort.AllowUnsort(false))
+      .Filterable(filterable => filterable.Mode(GridFilterMode.Menu))
+      .Pageable(pageable => pageable.ButtonCount(5))
+      .DataSource(dataSource => dataSource
+          .Ajax()
+          .Sort(sort => sort.Add(nameof(ClientRedirectUri.RedirectUri)).Ascending())
+          .PageSize(5)
+          .ServerOperation(false)))
+<hr />
+<h4>
+    <a asp-page="../Index" title="Clients">
+        <i class="fal fa-list"></i> List |
+    </a>
+    <a asp-page="../Edit/RedirectUris" asp-route-id="@Model.Client.Id" title="Edit Client Redirect URIs">
+        <i class="fal fa-edit"></i> Edit
+    </a> |
+    <a asp-page="../Delete" asp-route-id="@Model.Client.Id" title="Delete Client">
+        <i class="fal fa-trash"></i> Delete
+    </a>
+</h4>
+<hr />
+
+@section Scripts {
+    <script id="redirectUrisToolbarTemplate" type="text/x-kendo-template">
+        <h4>
+            <i class="fal fa-exchange"></i> Redirect URIs
+        </h4>
+    </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
