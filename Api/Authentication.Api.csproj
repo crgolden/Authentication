@@ -8,18 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BuildBundlerMinifier" Version="2.9.406" />
+    <PackageReference Include="BuildBundlerMinifier" Version="3.2.435" />
+    <PackageReference Include="Core.AspNetCore" Version="1.0.0-beta3" />
+    <PackageReference Include="Core.Azure.ServiceBus" Version="1.0.0-beta1" />
+    <PackageReference Include="Core.IdentityServer" Version="1.0.0-beta1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="3.1.1" />
+    <PackageReference Include="Services.Data.EntityFramework" Version="1.0.0-beta3" />
+    <PackageReference Include="Services.Email.SendGrid" Version="1.0.0-beta3" />
     <PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2019.2.619" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\Core\AspNetCore\Core.AspNetCore.csproj" />
-    <ProjectReference Include="..\..\Core\Azure.ServiceBus\Core.Azure.ServiceBus.csproj" />
-    <ProjectReference Include="..\..\Core\IdentityServer\Core.IdentityServer.csproj" />
-    <ProjectReference Include="..\..\Services\Data.EntityFramework\Services.Data.EntityFramework.csproj" />
-    <ProjectReference Include="..\..\Services\Email.SendGrid\Services.Email.SendGrid.csproj" />
   </ItemGroup>
 
 </Project>
