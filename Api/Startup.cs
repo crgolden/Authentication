@@ -5,6 +5,7 @@ namespace Authentication
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -29,7 +30,7 @@ namespace Authentication
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             _environment = environment;
-            _entityFrameworkConnectionString = configuration.GetValue<string>("EntityFrameworkConnectionString");
+            _entityFrameworkConnectionString = configuration.GetConnectionString("Authentication");
             _authority = configuration.GetValue<string>("Authority");
             _audience = configuration.GetValue<string>("Audience");
             _identityServerOptionsSection = configuration.GetIdentityServerOptionsSection();
@@ -45,6 +46,9 @@ namespace Authentication
         {
             DefaultInboundClaimTypeMap.Clear();
             DefaultOutboundClaimTypeMap.Clear();
+            services.AddApplicationInsightsTelemetry(options =>
+            {
+            });
             services.AddRazorPages(options =>
             {
             }).AddMvcOptions(options =>
@@ -96,8 +100,10 @@ namespace Authentication
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseHttpsRedirection();
             app.UseStaticFiles();
+            app.UseCookiePolicy();
+            app.UseExceptionHandler(app1 => app1.Run(async context => await context.HandleException().ConfigureAwait(false)));
+            app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(_corsOrigins));
             app.UseAuthentication();
