@@ -24,7 +24,7 @@ namespace Authentication
                 builder.ClearProviders().AddSerilog(context.Configuration, section);
                 if (context.HostingEnvironment.IsProduction())
                 {
-                    builder.AddAzureLogging();
+                    builder.AddAzureWebAppDiagnostics();
                 }
             })
             .ConfigureWebHostDefaults(webBuilder => webBuilder
@@ -32,7 +32,7 @@ namespace Authentication
                 {
                     if (context.HostingEnvironment.IsProduction())
                     {
-                        configBuilder.AddAzureKeyVault(keyVaultName: "crgolden");
+                        configBuilder.AddAzureKeyVault("https://crgolden.vault.azure.net/");
                     }
                 })
                 .UseStartup<Startup>());

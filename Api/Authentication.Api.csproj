@@ -10,13 +10,14 @@
   <ItemGroup>
     <PackageReference Include="BuildBundlerMinifier" Version="3.2.435" />
     <PackageReference Include="Core.AspNetCore" Version="1.0.0-beta3" />
-    <PackageReference Include="Core.Azure" Version="1.0.0-beta3" />
     <PackageReference Include="Core.Azure.ServiceBus" Version="1.0.0-beta1" />
     <PackageReference Include="Core.IdentityServer" Version="1.0.0-beta1" />
     <PackageReference Include="Core.Serilog" Version="1.0.0-beta1" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="3.1.1" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="3.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.AzureAppServices" Version="3.1.1" />
     <PackageReference Include="Services.Data.EntityFramework" Version="1.0.0-beta3" />
     <PackageReference Include="Services.Email.SendGrid" Version="1.0.0-beta3" />
     <PackageReference Include="Telerik.UI.for.AspNet.Core" Version="2020.1.114" />
