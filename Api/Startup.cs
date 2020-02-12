@@ -106,13 +106,13 @@ namespace Authentication
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseCors(policy => policy.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins(_corsOrigins));
+            app.UseHealthChecks("/health");
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseIdentityServer();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
-                endpoints.MapHealthChecks("/health");
             });
         }
     }
